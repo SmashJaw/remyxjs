@@ -101,7 +101,7 @@ export function ImportDocumentModal({ open, onClose, engine }) {
                 lineHeight: 1.5,
                 background: 'var(--rmx-surface, #fff)',
               }}
-              dangerouslySetInnerHTML={{ __html: engine?.sanitizer?.sanitize(preview) || preview }}
+              dangerouslySetInnerHTML={{ __html: engine?.sanitizer ? engine.sanitizer.sanitize(preview) : '' }}
             />
           </div>
 

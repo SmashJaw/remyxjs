@@ -1,8 +1,10 @@
+![Remyx Editor](../docs/images/Remyx-Logo.svg)
+
 # @remyx/core
 
-Framework-agnostic core engine for the [Remyx Editor](../remyx-editor/). Provides the editor engine, commands, plugin system, utilities, and CSS themes — with zero framework dependencies.
+Framework-agnostic core engine for the Remyx Editor. Provides the editor engine, commands, plugin system, utilities, and CSS themes — with zero framework dependencies.
 
-Use this package to build Remyx Editor integrations for any framework (Vue, Svelte, Angular, vanilla JS) or for server-side processing. For React projects, use [`@remyx/react`](../remyx-react/) (or the all-in-one [`remyx-editor`](../remyx-editor/)), which includes this package plus React components and hooks.
+Use this package to build Remyx Editor integrations for any framework (Vue, Svelte, Angular, vanilla JS) or for server-side processing. For React projects, use [`@remyx/react`](../remyx-react/), which includes this package plus React components and hooks.
 
 ## Installation
 
@@ -189,7 +191,7 @@ Import the stylesheet for editor theming (light/dark modes, CSS custom propertie
 import '@remyx/core/style.css';
 ```
 
-All styles use the `.rmx-` prefix and `--rmx-*` CSS custom properties. See the [theme variables table](../remyx-editor/README.md#available-theme-variables) for the full list.
+All styles use the `.rmx-` prefix and `--rmx-*` CSS custom properties. See the [theme variables table](../remyx-react/README.md#available-theme-variables) in the `@remyx/react` README for the full list.
 
 ## Building Framework Wrappers
 

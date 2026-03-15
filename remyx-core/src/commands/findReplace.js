@@ -97,13 +97,13 @@ export function registerFindReplaceCommands(engine) {
 
   engine.commands.register('replace', {
     execute(eng, { replaceText }) {
-      if (currentIndex < 0 || currentIndex >= currentMatches.length) return
+      if (currentMatches.length === 0 || currentIndex < 0 || currentIndex >= currentMatches.length) return
       const mark = currentMatches[currentIndex]
       const textNode = document.createTextNode(replaceText)
       mark.parentNode.replaceChild(textNode, mark)
       currentMatches.splice(currentIndex, 1)
       if (currentMatches.length > 0) {
-        currentIndex = currentIndex % currentMatches.length
+        currentIndex = Math.min(currentIndex, currentMatches.length - 1)
         highlightCurrent()
       } else {
         currentIndex = -1

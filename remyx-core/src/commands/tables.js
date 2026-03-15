@@ -171,8 +171,9 @@ export function registerTableCommands(engine) {
 
       // Add missing cells in the same row
       const tr = td.parentElement
+      const cellTag = tr.closest('thead') ? 'th' : td.tagName.toLowerCase()
       for (let c = 1; c < colspan; c++) {
-        const newCell = document.createElement(td.tagName.toLowerCase())
+        const newCell = document.createElement(cellTag)
         newCell.innerHTML = '<br>'
         tr.insertBefore(newCell, td.nextSibling)
       }
@@ -182,8 +183,9 @@ export function registerTableCommands(engine) {
         let currentRow = tr.nextElementSibling
         for (let r = 1; r < rowspan; r++) {
           if (!currentRow) break
+          const rowCellTag = currentRow.closest('thead') ? 'th' : 'td'
           for (let c = 0; c < colspan; c++) {
-            const newCell = document.createElement('td')
+            const newCell = document.createElement(rowCellTag)
             newCell.innerHTML = '<br>'
             const cellIndex = getCellIndex(td)
             const refCell = currentRow.cells[cellIndex]

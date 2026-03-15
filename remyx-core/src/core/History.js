@@ -66,10 +66,29 @@ export class History {
     this._lastSnapshot = html
   }
 
+  _disconnectObserver() {
+    if (this._observer) {
+      this._observer.disconnect()
+    }
+  }
+
+  _reconnectObserver() {
+    if (this._observer) {
+      this._observer.observe(this.engine.element, {
+        childList: true,
+        characterData: true,
+        attributes: true,
+        subtree: true,
+      })
+    }
+  }
+
   undo() {
     if (!this.canUndo()) return
 
     this._isPerformingUndoRedo = true
+    this._disconnectObserver()
+
     const currentHtml = this.engine.element.innerHTML
     const currentBookmark = this.engine.selection.save()
     this._redoStack.push({ html: currentHtml, bookmark: currentBookmark })
@@ -84,6 +103,7 @@ export class History {
       this.engine.selection.restore(state.bookmark)
     }
 
+    this._reconnectObserver()
     this._isPerformingUndoRedo = false
     this.engine.eventBus.emit('history:undo')
     this.engine.eventBus.emit('content:change')
@@ -93,6 +113,8 @@ export class History {
     if (!this.canRedo()) return
 
     this._isPerformingUndoRedo = true
+    this._disconnectObserver()
+
     const currentHtml = this.engine.element.innerHTML
     const currentBookmark = this.engine.selection.save()
     this._undoStack.push({ html: currentHtml, bookmark: currentBookmark })
@@ -107,6 +129,7 @@ export class History {
       this.engine.selection.restore(state.bookmark)
     }
 
+    this._reconnectObserver()
     this._isPerformingUndoRedo = false
     this.engine.eventBus.emit('history:redo')
     this.engine.eventBus.emit('content:change')

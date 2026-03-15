@@ -97,11 +97,12 @@ export function cleanPastedHTML(html) {
   cleaned = cleaned.replace(/<div[^>]*>\s*<\/div>/gi, '')
 
   // ── Font tag conversion ──
-  cleaned = cleaned.replace(/<font\s+face="([^"]*)"[^>]*>([\s\S]*?)<\/font>/gi,
+  // Use flexible regexes that match attributes anywhere in the tag (not just first position)
+  cleaned = cleaned.replace(/<font\s[^>]*?face="([^"]*)"[^>]*>([\s\S]*?)<\/font>/gi,
     '<span style="font-family: $1">$2</span>')
-  cleaned = cleaned.replace(/<font\s+color="([^"]*)"[^>]*>([\s\S]*?)<\/font>/gi,
+  cleaned = cleaned.replace(/<font\s[^>]*?color="([^"]*)"[^>]*>([\s\S]*?)<\/font>/gi,
     '<span style="color: $1">$2</span>')
-  cleaned = cleaned.replace(/<font\s+size="([^"]*)"[^>]*>([\s\S]*?)<\/font>/gi, '$2')
+  cleaned = cleaned.replace(/<font\s[^>]*?size="([^"]*)"[^>]*>([\s\S]*?)<\/font>/gi, '$2')
   cleaned = cleaned.replace(/<\/?font[^>]*>/gi, '')
 
   // ── Normalize semantic tags ──

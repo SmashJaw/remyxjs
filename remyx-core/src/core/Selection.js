@@ -98,14 +98,26 @@ export class Selection {
     }
 
     if (startNode) {
-      const range = document.createRange()
-      range.setStart(startNode, Math.min(startNodeOffset, startNode.textContent.length))
-      if (endNode) {
-        range.setEnd(endNode, Math.min(endNodeOffset, endNode.textContent.length))
-      } else {
-        range.collapse(true)
+      try {
+        const range = document.createRange()
+        range.setStart(startNode, Math.min(startNodeOffset, startNode.textContent.length))
+        if (endNode) {
+          range.setEnd(endNode, Math.min(endNodeOffset, endNode.textContent.length))
+        } else {
+          range.collapse(true)
+        }
+        this.setRange(range)
+      } catch {
+        // DOM structure changed between save and restore — fall back to end of editor
+        try {
+          const fallbackRange = document.createRange()
+          fallbackRange.selectNodeContents(this.editor)
+          fallbackRange.collapse(false)
+          this.setRange(fallbackRange)
+        } catch {
+          // Editor element may not be in the DOM — nothing we can do
+        }
       }
-      this.setRange(range)
     }
   }
 
