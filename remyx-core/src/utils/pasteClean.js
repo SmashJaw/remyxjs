@@ -4,6 +4,14 @@
  * and other rich text editors.
  */
 
+// Pre-compiled regex patterns for list detection (hoisted from inner loop)
+const BULLET_PATTERN = /^[\s]*[·•●○◦▪▫–—-]\s*/
+const NUMBER_PATTERN = /^[\s]*\d+[.)]\s*/
+const LETTER_PATTERN = /^[\s]*[a-zA-Z][.)]\s*/
+const INDENT_PATTERN = /margin-left|padding-left|text-indent/i
+// Combined list-prefix strip pattern (single regex instead of 3 separate .replace calls)
+const LIST_PREFIX_PATTERN = /^[\s]*(?:[·•●○◦▪▫–—-]|\d+[.)]|[a-zA-Z][.)])\s*/
+
 export function cleanPastedHTML(html) {
   if (!html) return ''
 
@@ -119,10 +127,6 @@ export function cleanPastedHTML(html) {
  *   <p style="margin-left:36pt;text-indent:-18pt">1.  Item text</p>
  */
 function convertWordListParagraphs(html) {
-  const bulletPatterns = /^[\s]*[·•●○◦▪▫–—-]\s*/
-  const numberPatterns = /^[\s]*\d+[.)]\s*/
-  const letterPatterns = /^[\s]*[a-zA-Z][.)]\s*/
-
   const parser = new DOMParser()
   const doc = parser.parseFromString(`<body>${html}</body>`, 'text/html')
   const paragraphs = doc.querySelectorAll('p')
@@ -134,10 +138,10 @@ function convertWordListParagraphs(html) {
   for (const p of paragraphs) {
     const text = p.textContent.trim()
     const style = p.getAttribute('style') || ''
-    const hasIndent = /margin-left|padding-left|text-indent/i.test(style)
+    const hasIndent = INDENT_PATTERN.test(style)
 
-    const isBullet = bulletPatterns.test(text)
-    const isNumber = numberPatterns.test(text) || letterPatterns.test(text)
+    const isBullet = BULLET_PATTERN.test(text)
+    const isNumber = NUMBER_PATTERN.test(text) || LETTER_PATTERN.test(text)
 
     if ((isBullet || isNumber) && hasIndent) {
       const type = isBullet ? 'ul' : 'ol'
@@ -150,11 +154,8 @@ function convertWordListParagraphs(html) {
       }
 
       const li = doc.createElement('li')
-      const innerHtml = p.innerHTML
-        .replace(/^[\s]*[·•●○◦▪▫–—-]\s*/, '')
-        .replace(/^[\s]*\d+[.)]\s*/, '')
-        .replace(/^[\s]*[a-zA-Z][.)]\s*/, '')
-      li.innerHTML = innerHtml
+      // Single combined regex instead of 3 separate .replace() calls
+      li.innerHTML = p.innerHTML.replace(LIST_PREFIX_PATTERN, '')
       listEl.appendChild(li)
       p.parentNode.removeChild(p)
     } else {
@@ -176,6 +177,23 @@ function convertWordListParagraphs(html) {
  * @param {string} text - Plain text to check
  * @returns {boolean}
  */
+// Pre-compiled markdown detection patterns (avoid recompilation per line)
+const MD_HEADING = /^#{1,6}\s+\S/
+const MD_UNORDERED = /^[-*+]\s+\S/
+const MD_ORDERED = /^\d+[.)]\s+\S/
+const MD_TASK = /^[-*+]\s+\[[ xX]\]\s/
+const MD_BLOCKQUOTE = /^>\s/
+const MD_HR = /^([-*_])\1{2,}$/
+const MD_CODE_FENCE = /^```/
+const MD_BOLD = /\*\*[^*]+\*\*/
+const MD_BOLD_ALT = /__[^_]+__/
+const MD_ITALIC = /(?<!\w)\*[^*\s][^*]*\*(?!\w)/
+const MD_LINK = /\[.+\]\(.+\)/
+const MD_IMAGE = /!\[.*\]\(.+\)/
+const MD_TABLE = /^\|.+\|/
+const MD_TABLE_SEP = /^\|[\s-:|]+\|$/
+const MD_INLINE_CODE = /`[^`]+`/
+
 export function looksLikeMarkdown(text) {
   if (!text || text.length < 3) return false
 
@@ -188,47 +206,20 @@ export function looksLikeMarkdown(text) {
     if (!trimmed) continue
     totalNonEmptyLines++
 
-    // ATX headings: # Heading, ## Heading, etc.
-    if (/^#{1,6}\s+\S/.test(trimmed)) { markdownSignals += 2; continue }
-
-    // Unordered list items: - item, * item, + item
-    if (/^[-*+]\s+\S/.test(trimmed)) { markdownSignals++; continue }
-
-    // Ordered list items: 1. item, 2) item
-    if (/^\d+[.)]\s+\S/.test(trimmed)) { markdownSignals++; continue }
-
-    // Task list items: - [x] item, - [ ] item
-    if (/^[-*+]\s+\[[ xX]\]\s/.test(trimmed)) { markdownSignals += 2; continue }
-
-    // Blockquotes: > text
-    if (/^>\s/.test(trimmed)) { markdownSignals++; continue }
-
-    // Horizontal rules: ---, ***, ___
-    if (/^([-*_])\1{2,}$/.test(trimmed)) { markdownSignals++; continue }
-
-    // Code fences: ```
-    if (/^```/.test(trimmed)) { markdownSignals += 2; continue }
-
-    // Bold: **text** or __text__
-    if (/\*\*[^*]+\*\*/.test(trimmed) || /__[^_]+__/.test(trimmed)) { markdownSignals++; continue }
-
-    // Italic: *text* (not in URLs or normal text)
-    if (/(?<!\w)\*[^*\s][^*]*\*(?!\w)/.test(trimmed)) { markdownSignals++; continue }
-
-    // Links: [text](url)
-    if (/\[.+\]\(.+\)/.test(trimmed)) { markdownSignals++; continue }
-
-    // Images: ![alt](url)
-    if (/!\[.*\]\(.+\)/.test(trimmed)) { markdownSignals += 2; continue }
-
-    // Tables: | col | col |
-    if (/^\|.+\|/.test(trimmed)) { markdownSignals++; continue }
-
-    // Table separator: |---|---|
-    if (/^\|[\s-:|]+\|$/.test(trimmed)) { markdownSignals++; continue }
-
-    // Inline code: `code`
-    if (/`[^`]+`/.test(trimmed)) { markdownSignals++; continue }
+    if (MD_HEADING.test(trimmed)) { markdownSignals += 2; continue }
+    if (MD_UNORDERED.test(trimmed)) { markdownSignals++; continue }
+    if (MD_ORDERED.test(trimmed)) { markdownSignals++; continue }
+    if (MD_TASK.test(trimmed)) { markdownSignals += 2; continue }
+    if (MD_BLOCKQUOTE.test(trimmed)) { markdownSignals++; continue }
+    if (MD_HR.test(trimmed)) { markdownSignals++; continue }
+    if (MD_CODE_FENCE.test(trimmed)) { markdownSignals += 2; continue }
+    if (MD_BOLD.test(trimmed) || MD_BOLD_ALT.test(trimmed)) { markdownSignals++; continue }
+    if (MD_ITALIC.test(trimmed)) { markdownSignals++; continue }
+    if (MD_LINK.test(trimmed)) { markdownSignals++; continue }
+    if (MD_IMAGE.test(trimmed)) { markdownSignals += 2; continue }
+    if (MD_TABLE.test(trimmed)) { markdownSignals++; continue }
+    if (MD_TABLE_SEP.test(trimmed)) { markdownSignals++; continue }
+    if (MD_INLINE_CODE.test(trimmed)) { markdownSignals++; continue }
   }
 
   if (totalNonEmptyLines === 0) return false

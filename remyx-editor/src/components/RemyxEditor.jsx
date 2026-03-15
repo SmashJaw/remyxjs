@@ -260,18 +260,23 @@ export default function RemyxEditor(props) {
     openModal(name, data)
   }, [openModal])
 
-  const editAreaStyle = {
+  const editAreaStyle = useMemo(() => ({
     minHeight: minHeight || height,
     maxHeight: maxHeight || undefined,
     height: maxHeight ? undefined : height,
-    overflowY: maxHeight ? 'auto' : 'auto',
-  }
+    overflowY: 'auto',
+  }), [minHeight, height, maxHeight])
+
+  const mergedStyle = useMemo(() =>
+    customTheme ? { ...customTheme, ...style } : style,
+    [customTheme, style]
+  )
 
   const editorTree = (
     <div
       ref={editorRootRef}
       className={`rmx-editor rmx-theme-${theme} ${className}`}
-      style={customTheme ? { ...customTheme, ...style } : style}
+      style={mergedStyle}
     >
       {menuBarConfig && (
         <MenuBar

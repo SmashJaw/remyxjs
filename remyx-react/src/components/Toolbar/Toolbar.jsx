@@ -1,12 +1,45 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { ToolbarButton } from './ToolbarButton.jsx'
 import { ToolbarDropdown } from './ToolbarDropdown.jsx'
 import { ToolbarColorPicker } from './ToolbarColorPicker.jsx'
 import { ToolbarSeparator } from './ToolbarSeparator.jsx'
 import { DEFAULT_TOOLBAR, DEFAULT_FONTS, DEFAULT_FONT_SIZES, HEADING_OPTIONS, BUTTON_COMMANDS, TOOLTIP_MAP, getShortcutLabel, getCommandActiveState } from '@remyx/core'
 
+// Pre-compute heading options with styles (static — never changes)
+const HEADING_OPTIONS_WITH_STYLES = HEADING_OPTIONS.map(o => ({
+  ...o,
+  style: o.tag !== 'p' ? { fontSize: `${22 - (parseInt(o.tag?.[1]) || 0) * 2}px`, fontWeight: 'bold' } : {},
+}))
+
 export function Toolbar({ config, engine, selectionState, onOpenModal, fonts = DEFAULT_FONTS, wordCountButton, toolbarItemTheme }) {
   const toolbarConfig = config || DEFAULT_TOOLBAR
+
+  // Memoize font family options — only recompute when fonts array changes
+  const fontOptions = useMemo(() =>
+    fonts.map((f) => ({ label: f, value: f, style: { fontFamily: f } })),
+    [fonts]
+  )
+
+  // Memoize command handlers to avoid creating new functions each render
+  const handleHeadingChange = useCallback((value) => {
+    engine?.executeCommand('heading', value === 'p' ? 'p' : value.replace('h', ''))
+  }, [engine])
+
+  const handleFontFamilyChange = useCallback((value) => {
+    engine?.executeCommand('fontFamily', value)
+  }, [engine])
+
+  const handleFontSizeChange = useCallback((value) => {
+    engine?.executeCommand('fontSize', value)
+  }, [engine])
+
+  const handleForeColorSelect = useCallback((color) => {
+    engine?.executeCommand('foreColor', color)
+  }, [engine])
+
+  const handleBackColorSelect = useCallback((color) => {
+    engine?.executeCommand('backColor', color)
+  }, [engine])
 
   const items = useMemo(() => {
     const result = []
@@ -45,11 +78,8 @@ export function Toolbar({ config, engine, selectionState, onOpenModal, fonts = D
           key={command}
           label="Normal"
           value={current}
-          options={HEADING_OPTIONS.map(o => ({
-            ...o,
-            style: o.tag !== 'p' ? { fontSize: `${22 - (parseInt(o.tag?.[1]) || 0) * 2}px`, fontWeight: 'bold' } : {},
-          }))}
-          onChange={(value) => engine.executeCommand('heading', value === 'p' ? 'p' : value.replace('h', ''))}
+          options={HEADING_OPTIONS_WITH_STYLES}
+          onChange={handleHeadingChange}
           tooltip="Block Type"
           width={130}
           itemStyle={itemStyle}
@@ -64,8 +94,8 @@ export function Toolbar({ config, engine, selectionState, onOpenModal, fonts = D
           key={command}
           label="Font"
           value={current}
-          options={fonts.map((f) => ({ label: f, value: f, style: { fontFamily: f } }))}
-          onChange={(value) => engine.executeCommand('fontFamily', value)}
+          options={fontOptions}
+          onChange={handleFontFamilyChange}
           tooltip="Font Family"
           width={140}
           itemStyle={itemStyle}
@@ -80,7 +110,7 @@ export function Toolbar({ config, engine, selectionState, onOpenModal, fonts = D
           label="Size"
           value={selectionState.fontSize || ''}
           options={DEFAULT_FONT_SIZES}
-          onChange={(value) => engine.executeCommand('fontSize', value)}
+          onChange={handleFontSizeChange}
           tooltip="Font Size"
           width={80}
           itemStyle={itemStyle}
@@ -96,7 +126,7 @@ export function Toolbar({ config, engine, selectionState, onOpenModal, fonts = D
           command="foreColor"
           tooltip="Text Color"
           currentColor={selectionState.foreColor}
-          onColorSelect={(color) => engine.executeCommand('foreColor', color)}
+          onColorSelect={handleForeColorSelect}
           itemStyle={itemStyle}
         />
       )
@@ -109,7 +139,7 @@ export function Toolbar({ config, engine, selectionState, onOpenModal, fonts = D
           command="backColor"
           tooltip="Background Color"
           currentColor={selectionState.backColor}
-          onColorSelect={(color) => engine.executeCommand('backColor', color)}
+          onColorSelect={handleBackColorSelect}
           itemStyle={itemStyle}
         />
       )

@@ -1,5 +1,8 @@
 import { ALLOWED_TAGS, ALLOWED_STYLES } from '../constants/schema.js'
 
+// Pre-compiled regex (avoid recompilation on every href check during sanitization)
+const JS_PROTOCOL_REGEX = /^\s*javascript\s*:/i
+
 export class Sanitizer {
   constructor(options = {}) {
     this.allowedTags = options.allowedTags || ALLOWED_TAGS
@@ -56,7 +59,7 @@ export class Sanitizer {
       // Sanitize href to prevent javascript: URLs
       if (child.hasAttribute('href')) {
         const href = child.getAttribute('href')
-        if (href && /^\s*javascript\s*:/i.test(href)) {
+        if (href && JS_PROTOCOL_REGEX.test(href)) {
           child.setAttribute('href', '#')
         }
       }

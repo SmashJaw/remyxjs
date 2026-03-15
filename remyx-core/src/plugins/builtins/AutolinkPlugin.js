@@ -10,6 +10,10 @@ const WWW_REGEX = /www\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+(
 // Requires at least one dot and a valid TLD (2+ alpha chars)
 const DOMAIN_REGEX = /(?<![a-zA-Z0-9@/:.])([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}([/][^\s<]*[^\s<.,:;"')\]!?])?/g
 
+// Pre-compiled regexes for checking if a match is part of a larger URL
+const PROTOCOL_BEFORE_REGEX = /https?:\/\/$/
+const PROTOCOL_OR_WWW_BEFORE_REGEX = /https?:\/\/[^\s]*$/
+
 // Common TLDs to validate bare domains against (avoids false positives like "file.txt")
 const COMMON_TLDS = new Set([
   'com', 'org', 'net', 'edu', 'gov', 'mil', 'int',
@@ -31,10 +35,13 @@ function extractTLD(domain) {
 }
 
 export function AutolinkPlugin() {
+  // Store handler reference for cleanup
+  let _handler = null
+
   return createPlugin({
     name: 'autolink',
     init(engine) {
-      engine.element.addEventListener('keydown', (e) => {
+      _handler = (e) => {
         if (e.key !== ' ' && e.key !== 'Enter') return
 
         const sel = window.getSelection()
@@ -72,7 +79,15 @@ export function AutolinkPlugin() {
         newRange.collapse(true)
         sel.removeAllRanges()
         sel.addRange(newRange)
-      })
+      }
+
+      engine.element.addEventListener('keydown', _handler)
+    },
+    destroy(engine) {
+      if (_handler) {
+        engine.element.removeEventListener('keydown', _handler)
+        _handler = null
+      }
     },
   })
 }
@@ -99,7 +114,7 @@ function findLastURLMatch(text) {
     if (!best || candidate.startIdx >= best.startIdx) {
       // Make sure this isn't part of a protocol URL already matched
       const before = text.slice(Math.max(0, m.index - 8), m.index)
-      if (!/https?:\/\/$/.test(before)) {
+      if (!PROTOCOL_BEFORE_REGEX.test(before)) {
         best = candidate
       }
     }
@@ -118,7 +133,7 @@ function findLastURLMatch(text) {
     if (!best || candidate.startIdx >= best.startIdx) {
       // Make sure this isn't part of a www. or protocol URL already matched
       const before = text.slice(Math.max(0, m.index - 12), m.index)
-      if (!/https?:\/\/[^\s]*$/.test(before) && !/www\.$/.test(before)) {
+      if (!PROTOCOL_OR_WWW_BEFORE_REGEX.test(before) && !/www\.$/.test(before)) {
         best = candidate
       }
     }

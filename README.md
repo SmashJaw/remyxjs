@@ -9,11 +9,25 @@ A feature-rich WYSIWYG editor built on a framework-agnostic core with first-clas
 | [`@remyx/core`](./remyx-core/) | 0.23.0 | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
 | [`@remyx/react`](./remyx-react/) | 0.23.0 | React components, hooks, TypeScript declarations (peer-depends on `@remyx/core`) |
 | [`remyx-editor`](./remyx-editor/) | 0.23.0 | All-in-one React package (re-exports `@remyx/core` + React layer) |
+| [`create-remyx`](./create-remyx/) | 0.23.0 | CLI scaffolding tool — choose JSX or TypeScript |
+
+### Getting Started (New Project)
+
+The fastest way to start is with `create-remyx`, which lets you choose JSX or TypeScript:
+
+```bash
+npm create remyx@latest my-editor
+```
+
+You'll be prompted to pick:
+- **Language**: JavaScript (JSX) or TypeScript (TSX)
+- **PDF/DOCX import**: include or skip heavy document dependencies (~5 MB)
 
 ### Which package should I use?
 
 | Use case | Install |
 | --- | --- |
+| New project (interactive setup) | `npm create remyx@latest` |
 | React project (simplest) | `npm install remyx-editor` |
 | React project (modular) | `npm install @remyx/core @remyx/react` |
 | Vue / Svelte / Angular / Vanilla JS | `npm install @remyx/core` (build your own wrapper) |
@@ -63,6 +77,7 @@ remyx-editor (meta) ──→ @remyx/core + React layer (backward-compatible)
 
 ```
 packages/
+  create-remyx/   → create-remyx        CLI scaffolding (JSX or TypeScript)
   remyx-core/     → @remyx/core         80 exports, 0 framework deps
   remyx-react/    → @remyx/react        React components + hooks + TS types
   remyx-editor/   → remyx-editor        All-in-one (backward-compatible)

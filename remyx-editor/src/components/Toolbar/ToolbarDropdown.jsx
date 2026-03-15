@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { ChevronDownIcon } from '../../icons/index.jsx'
 
-export function ToolbarDropdown({ label, value, options, onChange, tooltip, icon: Icon, width = 120, itemStyle }) {
+export const ToolbarDropdown = React.memo(function ToolbarDropdown({ label, value, options, onChange, tooltip, icon: Icon, width = 120, itemStyle }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -19,15 +19,19 @@ export function ToolbarDropdown({ label, value, options, onChange, tooltip, icon
   const currentOption = options.find((o) => o.value === value)
   const displayLabel = currentOption?.label || label
 
+  const handleToggle = useCallback((e) => {
+    e.preventDefault()
+    setOpen(prev => !prev)
+  }, [])
+
+  const handleMouseDown = useCallback((e) => e.preventDefault(), [])
+
   return (
     <div className="rmx-toolbar-dropdown" ref={ref} style={{ minWidth: width, ...itemStyle }}>
       <button
         className={`rmx-toolbar-btn rmx-toolbar-dropdown-btn`}
-        onClick={(e) => {
-          e.preventDefault()
-          setOpen(!open)
-        }}
-        onMouseDown={(e) => e.preventDefault()}
+        onClick={handleToggle}
+        onMouseDown={handleMouseDown}
         title={tooltip}
         type="button"
         aria-haspopup="listbox"
@@ -48,7 +52,7 @@ export function ToolbarDropdown({ label, value, options, onChange, tooltip, icon
                 onChange(option.value)
                 setOpen(false)
               }}
-              onMouseDown={(e) => e.preventDefault()}
+              onMouseDown={handleMouseDown}
               role="option"
               aria-selected={option.value === value}
               type="button"
@@ -61,4 +65,4 @@ export function ToolbarDropdown({ label, value, options, onChange, tooltip, icon
       )}
     </div>
   )
-}
+})

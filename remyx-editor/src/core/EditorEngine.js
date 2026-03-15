@@ -14,6 +14,7 @@ export class EditorEngine {
     this.options = options
     this.outputFormat = options.outputFormat || 'html'
     this.isSourceMode = false
+    this.isMarkdownMode = false
     this._isDestroyed = false
 
     this.eventBus = new EventBus()

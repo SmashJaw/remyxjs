@@ -1,3 +1,7 @@
+// Pre-compiled regex patterns (avoid recompilation on every selection change)
+const HEADING_REGEX = /^h[1-6]$/
+const BLOCK_TAGS = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'BLOCKQUOTE', 'PRE', 'LI', 'TD', 'TH'])
+
 export class Selection {
   constructor(editorElement) {
     this.editor = editorElement
@@ -125,9 +129,8 @@ export class Selection {
 
   getParentBlock() {
     let el = this.getParentElement()
-    const blockTags = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'BLOCKQUOTE', 'PRE', 'LI', 'TD', 'TH']
     while (el && el !== this.editor) {
-      if (blockTags.includes(el.tagName)) return el
+      if (BLOCK_TAGS.has(el.tagName)) return el
       el = el.parentElement
     }
     return null
@@ -220,7 +223,7 @@ export class Selection {
     const block = this.getParentBlock()
     if (block) {
       const tag = block.tagName.toLowerCase()
-      if (/^h[1-6]$/.test(tag)) {
+      if (HEADING_REGEX.test(tag)) {
         formats.heading = tag
       }
       const align = block.style.textAlign || window.getComputedStyle(block).textAlign

@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { DEFAULT_COLORS } from '../../constants/defaults.js'
 import { ICON_MAP } from '../../icons/index.jsx'
 
-export function ToolbarColorPicker({ command, tooltip, currentColor, onColorSelect, itemStyle }) {
+export const ToolbarColorPicker = React.memo(function ToolbarColorPicker({ command, tooltip, currentColor, onColorSelect, itemStyle }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -19,15 +19,19 @@ export function ToolbarColorPicker({ command, tooltip, currentColor, onColorSele
 
   const IconComponent = ICON_MAP[command]
 
+  const handleToggle = useCallback((e) => {
+    e.preventDefault()
+    setOpen(prev => !prev)
+  }, [])
+
+  const handleMouseDown = useCallback((e) => e.preventDefault(), [])
+
   return (
     <div className="rmx-toolbar-colorpicker" ref={ref} style={itemStyle || undefined}>
       <button
         className="rmx-toolbar-btn"
-        onClick={(e) => {
-          e.preventDefault()
-          setOpen(!open)
-        }}
-        onMouseDown={(e) => e.preventDefault()}
+        onClick={handleToggle}
+        onMouseDown={handleMouseDown}
         title={tooltip}
         type="button"
         aria-haspopup="true"
@@ -48,7 +52,7 @@ export function ToolbarColorPicker({ command, tooltip, currentColor, onColorSele
                   onColorSelect(color)
                   setOpen(false)
                 }}
-                onMouseDown={(e) => e.preventDefault()}
+                onMouseDown={handleMouseDown}
                 title={color}
                 type="button"
                 aria-label={`Color ${color}`}
@@ -73,4 +77,4 @@ export function ToolbarColorPicker({ command, tooltip, currentColor, onColorSele
       )}
     </div>
   )
-}
+})
