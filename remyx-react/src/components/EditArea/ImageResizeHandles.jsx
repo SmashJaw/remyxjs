@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 export function ImageResizeHandles({ image, engine, editorRect }) {
   const [resizing, setResizing] = useState(false)

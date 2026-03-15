@@ -2,14 +2,14 @@
 
 # Remyx Editor Roadmap
 
-**Current Version:** 0.23.0
+**Current Version:** 0.23.16
 **Status:** Multi-package architecture complete (`@remyx/core` + `@remyx/react`), feature-complete for core editing
 
 A living document outlining planned features, improvements, and long-term direction for the Remyx rich-text editor.
 
 ---
 
-## ~~Multi-Package Architecture~~ ✅ Shipped (v0.23.0)
+## ~~Multi-Package Architecture~~ ✅ Shipped (v0.23.4)
 
 - ~~Extract framework-agnostic core into `@remyx/core`~~ — 49 files, 80 exports, zero framework deps
 - ~~Create `@remyx/react` with peer dependency on core~~ — 36 modules, full TypeScript declarations

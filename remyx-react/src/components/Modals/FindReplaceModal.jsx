@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 export function FindReplacePanel({ open, onClose, engine }) {
   const [findText, setFindText] = useState('')

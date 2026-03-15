@@ -86,7 +86,8 @@ export function useRemyxEditor(targetRef, options = {}) {
     // Create the editable div
     const editable = document.createElement('div')
     editable.className = 'rmx-content'
-    const height = options.height || 300
+    const DEFAULT_HEIGHT = 300
+    const height = options.height || DEFAULT_HEIGHT
     editable.style.minHeight = typeof height === 'number' ? `${height}px` : height
     editable.style.overflowY = 'auto'
 

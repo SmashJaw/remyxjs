@@ -8,9 +8,9 @@ A feature-rich WYSIWYG editor built on a framework-agnostic core with first-clas
 
 | Package | Version | Description |
 | --- | --- | --- |
-| [`@remyx/core`](./remyx-core/) | 0.23.0 | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
-| [`@remyx/react`](./remyx-react/) | 0.23.0 | React components, hooks, TypeScript declarations (peer-depends on `@remyx/core`) |
-| [`create-remyx`](./create-remyx/) | 0.23.0 | CLI scaffolding tool — choose JSX or TypeScript |
+| [`@remyx/core`](./remyx-core/) | 0.23.16 | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
+| [`@remyx/react`](./remyx-react/) | 0.23.41 | React components, hooks, TypeScript declarations (peer-depends on `@remyx/core`) |
+| [`create-remyx`](./create-remyx/) | 0.23.4 | CLI scaffolding tool — choose JSX or TypeScript |
 
 ### Getting Started (New Project)
 
@@ -94,6 +94,7 @@ npm run build        # build all packages
 - [@remyx/react README](./remyx-react/README.md) — full API docs, props, theming, plugins, toolbar, menu bar
 - [@remyx/core README](./remyx-core/README.md) — engine API, commands, utilities, building framework wrappers
 - [BUGS.md](./docs/BUGS.md) — known bugs and resolution status
+- [CHANGELOG.md](./docs/CHANGELOG.md) — version history and release notes
 - [CLEANUP.md](./docs/CLEANUP.md) — cleanup tasks and technical debt
 - [OPTIMIZATION.md](./docs/OPTIMIZATION.md) — bundle size and runtime performance roadmap
 - [PLANNED_PACKAGES.md](./docs/PLANNED_PACKAGES.md) — multi-package restructure plan and progress

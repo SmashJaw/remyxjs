@@ -3,7 +3,7 @@
 # Security Audit — Remyx Editor
 
 **Last audited:** 2026-03-15
-**Version:** 0.23.0
+**Version:** 0.23.16
 **Scope:** Full source audit of `packages/remyx-core/src/` and `packages/remyx-react/src/`
 
 ---
@@ -12,7 +12,7 @@
 
 The Remyx Editor has a solid security foundation — a custom HTML sanitizer with tag/attribute allowlists, scoped DOM operations, no `eval`/`Function`/`postMessage` usage, and no client-side data storage. However, several vulnerabilities exist across the markdown parsing pipeline, data URI handling, iframe embedding, and direct DOM property assignments that bypass the sanitizer.
 
-Since the 0.23.0 multi-package restructure, the attack surface is split:
+Since the 0.23.4 multi-package restructure, the attack surface is split:
 
 | Package | Security Boundary | Risk |
 | --- | --- | --- |
@@ -202,7 +202,7 @@ cleaned = cleaned.replace(/<object[\s\S]*?<\/object>/gi, '')
 
 ---
 
-## React-Specific Findings (0.23.0)
+## React-Specific Findings (0.23.4)
 
 ### 20. `dangerouslySetInnerHTML` Fallback in Import Preview
 

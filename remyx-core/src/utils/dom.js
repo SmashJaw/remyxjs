@@ -39,8 +39,11 @@ export function unwrapTag(element) {
   parent.removeChild(element)
 }
 
+/** Length of the random suffix in generated IDs */
+const GENERATED_ID_LENGTH = 9
+
 export function generateId() {
-  return 'rmx-' + Math.random().toString(36).substr(2, 9)
+  return 'rmx-' + Math.random().toString(36).substr(2, GENERATED_ID_LENGTH)
 }
 
 export function isBlockEmpty(block) {

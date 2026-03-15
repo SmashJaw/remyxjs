@@ -2,8 +2,8 @@
 
 # Cleanup & Technical Debt
 
-**Last updated:** 2026-03-14
-**Version:** 0.23.0
+**Last updated:** 2026-03-15
+**Version:** 0.23.16
 
 A prioritized list of cleanup tasks, code quality improvements, and technical debt across the Remyx Editor monorepo.
 
@@ -37,16 +37,14 @@ No test files exist anywhere in the monorepo. This is the biggest quality gap.
 
 ---
 
-## High — Package Metadata
+## ~~High — Package Metadata~~ ✅ Resolved
 
-Both `package.json` files are missing npm metadata fields needed for discoverability.
-
-- [ ] **Add `description`** to `remyx-core` and `remyx-react` package.json
-- [ ] **Add `keywords`** — `["wysiwyg", "editor", "rich-text", "contenteditable", ...]`
-- [ ] **Add `repository`** — `{ "type": "git", "url": "...", "directory": "packages/remyx-core" }`
-- [ ] **Add `bugs`** and `homepage` URLs
-- [ ] **Add `author`** and `license` fields
-- [ ] **Add `sideEffects`** field for tree-shaking — `["*.css"]` for core, `false` for react
+- [x] **Add `description`** — Added to both `remyx-core` and `remyx-react` `package.json`.
+- [x] **Add `keywords`** — Added WYSIWYG/editor/rich-text keywords to both packages.
+- [x] **Add `repository`** — Added with `directory` field pointing to each package.
+- [x] **Add `bugs`** and `homepage` — Added GitHub Issues URL and package-specific README links.
+- [x] **Add `author`** and `license` — Added `"Remyx"` author and `"MIT"` license to both packages.
+- [x] **Add `sideEffects`** — `["*.css"]` for core, `false` for react.
 
 ---
 
@@ -71,7 +69,7 @@ Both `package.json` files are missing npm metadata fields needed for discoverabi
 
 These components are oversized and should be refactored:
 
-- [ ] **`RemyxEditor.jsx` (406 lines)** — Extract portal/attach logic into a custom hook, extract modal rendering into a `<ModalContainer>` sub-component, extract keyboard shortcut wiring
+- [x] **`RemyxEditor.jsx` (406 lines)** — ✅ Extracted into `useResolvedConfig`, `usePortalAttachment`, and `useEditorRect` hooks. Modals lazy-loaded with `React.lazy`. Now ~230 lines.
 - [ ] **`Toolbar.jsx` (232 lines)** — Extract the command execution logic into a shared hook or utility used by both Toolbar and MenuBar
 - [ ] **`useEditorEngine.js` (~200 lines)** — The command registration block is repetitive; consider a loop over a registry array
 
@@ -79,10 +77,10 @@ These components are oversized and should be refactored:
 
 ## Medium — Accessibility
 
-- [ ] **Toolbar buttons missing `aria-pressed`** — Toggle buttons (bold, italic, etc.) should have `aria-pressed={isActive}` for screen readers
-- [ ] **Toolbar buttons missing `aria-label`** — Icon-only buttons need text labels; currently only have `title` attributes
-- [ ] **Modal overlays missing `role="dialog"`** — `ModalOverlay.jsx` should set `role="dialog"` and `aria-modal="true"`
-- [ ] **Color picker swatches** — No `aria-label` describing the color (e.g., "Red", "Blue")
+- [x] **Toolbar buttons missing `aria-pressed`** — ✅ `ToolbarButton` already has `aria-pressed={active}`.
+- [x] **Toolbar buttons missing `aria-label`** — ✅ `ToolbarButton` already has `aria-label={tooltip}`.
+- [x] **Modal overlays missing `role="dialog"`** — ✅ `ModalOverlay` already has `role="dialog"` and `aria-modal="true"`.
+- [x] **Color picker swatches** — ✅ Already has `aria-label={`Color ${color}`}`.
 - [ ] **Menu bar** — Should implement WAI-ARIA menu pattern: `role="menubar"`, `role="menu"`, `role="menuitem"`, `aria-haspopup`, `aria-expanded`
 - [ ] **Focus management in modals** — Verify focus is trapped inside open modals and restored on close
 - [ ] **Skip navigation** — No skip link for keyboard users to jump past the toolbar to content
@@ -92,11 +90,8 @@ These components are oversized and should be refactored:
 
 ## Medium — React Performance
 
-- [ ] **Missing `React.memo`** — Pure components that receive stable props should be memoized:
-  - `ToolbarButton` — re-renders on every selection change even if its active state hasn't changed
-  - `ToolbarSeparator` — stateless, never needs to re-render
-  - `MenuItem` — can be memoized on `selectionState` active check
-- [ ] **`useSelection` polling** — Check if `selectionchange` event listener is efficient; avoid unnecessary state updates when selection hasn't meaningfully changed
+- [x] **Missing `React.memo`** — ✅ `ToolbarButton`, `ToolbarSeparator`, `ToolbarColorPicker`, `ToolbarDropdown`, and `Toolbar` are all wrapped in `React.memo`.
+- [x] **`useSelection` polling** — ✅ Split into `formatState`/`uiState` with `shallowEqual` bail-out. DOM queries cached via `useRef`.
 - [ ] **`useEffect` dependency warnings suppressed** — 6 instances of `// eslint-disable-line react-hooks/exhaustive-deps` across `RemyxEditor.jsx`, `useEditorEngine.js`, and `useRemyxEditor.js`. These need investigation to determine if they cause stale closure bugs or are legitimate optimizations.
 
 ---
@@ -123,29 +118,26 @@ These components are oversized and should be refactored:
 
 ## Low — Git Hygiene
 
-- [ ] **`.DS_Store` tracked in git** — Add to `.gitignore` and remove from index: `git rm --cached .DS_Store packages/.DS_Store`
-- [ ] **Stale file deletions** — `git status` shows deleted files from root (`PLANNED_PACKAGES.md`, `README.md`, `ROADMAP.md`, `SECURITY.md`) that were moved to `packages/`. Stage the deletions.
-- [ ] **`.claude/` directory** — Decide whether to gitignore or track Claude session files
-- [ ] **Add `.gitignore` entries** — IDE workspace files (`.code-workspace`), coverage reports (`coverage/`), Vitest cache (`.vitest/`)
+- [x] **`.DS_Store` tracked in git** — ✅ Already in `.gitignore` and not tracked.
+- [x] **Stale file deletions** — ✅ No stale deletions remain; files were moved and committed.
+- [x] **`.claude/` directory** — ✅ Added to `.gitignore`.
+- [x] **Add `.gitignore` entries** — ✅ Added `.code-workspace`, `coverage/`, `.vitest/`.
 
 ---
 
 ## Low — Code Style
 
-- [ ] **Magic numbers** — Extract to named constants:
-  - Font size calculation: `22 - (parseInt(o.tag?.[1]) || 0) * 2` in `Toolbar.jsx`
-  - ID generation length `9` in `dom.js`
-  - Default editor height `300` (already a prop default, but used in multiple places)
-- [ ] **Inconsistent React import** — Some files use `import React, { useState }` (needed for older JSX transforms), others omit the default import. With the new JSX transform (`react/jsx-runtime`), the default import is unnecessary.
-- [ ] **`"default" is imported from external module "react" but never used`** — Vite build warns about 27 files importing `React` default unnecessarily. Remove unused default imports.
+- [x] **Magic numbers** — ✅ Extracted `HEADING_BASE_FONT_SIZE`/`HEADING_FONT_SIZE_STEP` in Toolbar.jsx, `GENERATED_ID_LENGTH` in dom.js, `DEFAULT_EDITOR_HEIGHT` in useResolvedConfig.js.
+- [x] **Inconsistent React import** — ✅ Removed unnecessary `React` default imports from 16 files that only use named imports.
+- [x] **`"default" is imported from external module "react" but never used`** — ✅ Fixed — only files using `React.memo`/`React.lazy` retain the default import.
 
 ---
 
 ## Low — Documentation
 
 - [ ] **No CONTRIBUTING.md** — Add contributor guidelines, development setup, and PR process
-- [ ] **No CHANGELOG.md** — Track version changes for consumers
-- [ ] **No LICENSE file** — README says MIT but there's no LICENSE file at the repo root or in packages
+- [x] **No CHANGELOG.md** — ✅ Added `CHANGELOG.md` to `packages/docs/`.
+- [x] **No LICENSE file** — ✅ MIT LICENSE file added to repo root.
 - [ ] **API docs** — Consider generating API documentation from JSDoc comments (TypeDoc or similar)
 - [ ] **Storybook / examples** — The demo app in `src/App.jsx` is good but could be a standalone Storybook for visual testing
 
@@ -166,7 +158,7 @@ These aren't bugs or debt — they're enhancements worth considering:
 
 - [ ] **Error boundaries** — Wrap `<RemyxEditor>` in a React error boundary so a crash doesn't take down the host app
 - [ ] **`onError` callback prop** — Let consumers handle editor errors gracefully
-- [ ] **Lazy-load heavy modules** — `pdfjs-dist` and `mammoth` are large; dynamic import on first use
+- [x] **Lazy-load heavy modules** — ✅ `pdfjs-dist` and `mammoth` moved to optional peer deps; `convertDocument()` uses dynamic imports per format.
 - [ ] **Web Worker for sanitization** — Move HTML sanitization off the main thread for large documents
 - [ ] **Source maps** — Ensure `.map` files are generated for all production builds
 - [ ] **CDN build** — Add a UMD/IIFE build for `<script>` tag consumers
@@ -181,16 +173,16 @@ These aren't bugs or debt — they're enhancements worth considering:
 | --- | --- | --- | --- |
 | ~~**1**~~ | ~~Duplicate code removal~~ | ~~4 items~~ | ✅ Complete |
 | **2** | Test infrastructure | 10 items | — |
-| **3** | Package metadata | 6 items | — |
+| ~~**3**~~ | ~~Package metadata~~ | ~~6 items~~ | ✅ Complete |
 | **4** | Build config fixes | 2 items | — |
 | **5** | Error handling | 5 items | — |
-| **6** | Component refactoring | 3 items | — |
-| **7** | Accessibility | 8 items | — |
-| **8** | React performance | 3 items | — |
+| **6** | Component refactoring | 1 of 3 done | — |
+| **7** | Accessibility | 4 of 8 done | — |
+| ~~**8**~~ | ~~React performance~~ | ~~2 of 3 done~~ | ✅ Mostly complete |
 | **9** | TypeScript | 3 items | — |
 | **10** | CSS cleanup | 3 items | — |
-| **11** | Git hygiene | 4 items | — |
-| **12** | Code style | 3 items | — |
-| **13** | Documentation | 5 items | — |
+| ~~**11**~~ | ~~Git hygiene~~ | ~~4 items~~ | ✅ Complete |
+| ~~**12**~~ | ~~Code style~~ | ~~3 items~~ | ✅ Complete |
+| **13** | Documentation | 2 of 5 remaining | — |
 | **14** | Dependencies | 4 items | — |
-| **15** | Future improvements | 8 items | — |
+| **15** | Future improvements | 7 items | — |

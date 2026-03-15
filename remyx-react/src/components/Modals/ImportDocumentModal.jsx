@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { ModalOverlay } from './ModalOverlay.jsx'
 import { convertDocument, getSupportedExtensions, getSupportedFormatNames } from '@remyx/core'
 

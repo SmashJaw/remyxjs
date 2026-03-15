@@ -1,6 +1,19 @@
 {
   "name": "@remyx/react",
-  "version": "0.23.37",
+  "version": "0.23.41",
+  "description": "React components and hooks for the Remyx rich-text editor",
+  "keywords": ["wysiwyg", "editor", "rich-text", "react", "contenteditable", "react-editor", "text-editor"],
+  "author": "Remyx",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remyx-editor/remyx.git",
+    "directory": "packages/remyx-react"
+  },
+  "bugs": {
+    "url": "https://github.com/remyx-editor/remyx/issues"
+  },
+  "homepage": "https://github.com/remyx-editor/remyx/tree/master/packages/remyx-react#readme",
   "type": "module",
   "main": "./dist/remyx-react.cjs",
   "module": "./dist/remyx-react.js",
@@ -14,13 +27,14 @@
     "./style.css": "./dist/style.css"
   },
   "files": ["dist"],
+  "sideEffects": false,
   "peerDependencies": {
-    "@remyx/core": ">=0.23.0",
+    "@remyx/core": ">=0.23.4",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
-    "@remyx/core": "^0.23.0",
+    "@remyx/core": "^0.23.4",
     "@vitejs/plugin-react": "^5.1.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

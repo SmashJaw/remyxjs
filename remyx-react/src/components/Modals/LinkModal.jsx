@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { ModalOverlay } from './ModalOverlay.jsx'
 
 export function LinkModal({ open, onClose, engine, data }) {

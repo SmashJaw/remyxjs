@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useCallback } from 'react'
+import { useRef, useMemo, useCallback } from 'react'
 import { highlightHTML } from './highlightHTML.js'
 import { highlightMarkdown } from './highlightMarkdown.js'
 import './CodeEditor.css'

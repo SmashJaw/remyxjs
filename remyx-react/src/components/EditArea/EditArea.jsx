@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import { forwardRef } from 'react'
 
 export const EditArea = forwardRef(function EditArea({ style, readOnly, className = '' }, ref) {
   return (

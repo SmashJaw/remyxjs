@@ -1,6 +1,6 @@
 {
   "name": "create-remyx",
-  "version": "0.23.0",
+  "version": "0.23.4",
   "type": "module",
   "description": "Scaffold a new Remyx Editor project with JSX or TypeScript",
   "bin": {

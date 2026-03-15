@@ -1,6 +1,19 @@
 {
   "name": "@remyx/core",
-  "version": "0.23.12",
+  "version": "0.23.16",
+  "description": "Framework-agnostic rich-text editor engine with commands, plugins, sanitization, and CSS themes",
+  "keywords": ["wysiwyg", "editor", "rich-text", "contenteditable", "html-editor", "text-editor", "sanitizer", "plugins"],
+  "author": "Remyx",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remyx-editor/remyx.git",
+    "directory": "packages/remyx-core"
+  },
+  "bugs": {
+    "url": "https://github.com/remyx-editor/remyx/issues"
+  },
+  "homepage": "https://github.com/remyx-editor/remyx/tree/master/packages/remyx-core#readme",
   "type": "module",
   "main": "./dist/remyx-core.cjs",
   "module": "./dist/remyx-core.js",
@@ -14,6 +27,7 @@
     "./style.css": "./dist/style.css"
   },
   "files": ["dist"],
+  "sideEffects": ["*.css"],
   "dependencies": {
     "marked": "^15.0.0",
     "turndown": "^7.2.0",

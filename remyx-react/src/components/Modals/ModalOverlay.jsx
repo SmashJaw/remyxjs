@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { CloseIcon } from '../../icons/index.jsx'
 
 export function ModalOverlay({ title, open, onClose, children, width = 420 }) {

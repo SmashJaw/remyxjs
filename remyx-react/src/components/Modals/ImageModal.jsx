@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { ModalOverlay } from './ModalOverlay.jsx'
 
 export function ImageModal({ open, onClose, engine }) {

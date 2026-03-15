@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { ModalOverlay } from './ModalOverlay.jsx'
 
 const MAX_SIZE = 10

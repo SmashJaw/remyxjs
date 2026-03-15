@@ -3,6 +3,9 @@ import { useRemyxConfig } from '../config/RemyxConfigProvider.jsx'
 import { DEFAULT_TOOLBAR, DEFAULT_FONTS, DEFAULT_MENU_BAR } from '@remyx/core'
 import { collectMenuBarCommands } from '../components/MenuBar/MenuBar.jsx'
 
+/** Default editor content area height in pixels */
+export const DEFAULT_EDITOR_HEIGHT = 300
+
 /**
  * Resolves editor configuration from props, context provider, and defaults.
  * Handles config merging, menu bar resolution, and toolbar auto-deduplication.
@@ -31,7 +34,7 @@ export function useResolvedConfig(props) {
     menuBar: menuBarProp,
     theme = 'light',
     placeholder = '',
-    height = 300,
+    height = DEFAULT_EDITOR_HEIGHT,
     minHeight,
     maxHeight,
     readOnly = false,

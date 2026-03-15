@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { ModalOverlay } from './ModalOverlay.jsx'
 
 export function EmbedModal({ open, onClose, engine }) {

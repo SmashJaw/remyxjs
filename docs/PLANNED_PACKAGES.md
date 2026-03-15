@@ -120,7 +120,7 @@ packages/remyx-core/
 ```json
 {
   "name": "@remyx/core",
-  "version": "0.23.0",
+  "version": "0.23.4",
   "type": "module",
   "main": "./dist/remyx-core.cjs",
   "module": "./dist/remyx-core.js",
@@ -301,7 +301,7 @@ packages/remyx-react/
 ```json
 {
   "name": "@remyx/react",
-  "version": "0.23.0",
+  "version": "0.23.4",
   "type": "module",
   "main": "./dist/remyx-react.cjs",
   "module": "./dist/remyx-react.js",
@@ -316,7 +316,7 @@ packages/remyx-react/
   },
   "files": ["dist"],
   "peerDependencies": {
-    "@remyx/core": ">=0.23.0",
+    "@remyx/core": ">=0.23.4",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
@@ -565,7 +565,7 @@ packages/remyx-vue/
 ```json
 {
   "name": "@remyx/vue",
-  "version": "0.23.0",
+  "version": "0.23.4",
   "type": "module",
   "main": "./dist/remyx-vue.cjs",
   "module": "./dist/remyx-vue.js",
@@ -578,7 +578,7 @@ packages/remyx-vue/
   },
   "files": ["dist"],
   "peerDependencies": {
-    "@remyx/core": ">=0.23.0",
+    "@remyx/core": ">=0.23.4",
     "vue": ">=3.3.0"
   }
 }
@@ -699,9 +699,9 @@ Angular libraries use `ng-packagr` for building. This is different from the Vite
 ```json
 {
   "name": "@remyx/angular",
-  "version": "0.23.0",
+  "version": "0.23.4",
   "peerDependencies": {
-    "@remyx/core": ">=0.23.0",
+    "@remyx/core": ">=0.23.4",
     "@angular/core": ">=16.0.0",
     "@angular/common": ">=16.0.0"
   }
@@ -756,13 +756,13 @@ packages/remyx-svelte/
 ```json
 {
   "name": "@remyx/svelte",
-  "version": "0.23.0",
+  "version": "0.23.4",
   "type": "module",
   "svelte": "./dist/index.js",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "peerDependencies": {
-    "@remyx/core": ">=0.23.0",
+    "@remyx/core": ">=0.23.4",
     "svelte": ">=5.0.0"
   }
 }
@@ -836,12 +836,12 @@ This requires extracting SVG path data from `icons/index.jsx` and converting to 
 ```json
 {
   "name": "@remyx/vanilla",
-  "version": "0.23.0",
+  "version": "0.23.4",
   "type": "module",
   "main": "./dist/remyx-vanilla.js",
   "module": "./dist/remyx-vanilla.js",
   "peerDependencies": {
-    "@remyx/core": ">=0.23.0"
+    "@remyx/core": ">=0.23.4"
   }
 }
 ```
@@ -890,7 +890,7 @@ export class ServerSanitizer extends CoreSanitizer {
 ```json
 {
   "name": "@remyx/ssr",
-  "version": "0.23.0",
+  "version": "0.23.4",
   "type": "module",
   "main": "./dist/remyx-ssr.js",
   "module": "./dist/remyx-ssr.js",
@@ -898,7 +898,7 @@ export class ServerSanitizer extends CoreSanitizer {
     "jsdom": "^24.0.0"
   },
   "peerDependencies": {
-    "@remyx/core": ">=0.23.0"
+    "@remyx/core": ">=0.23.4"
   }
 }
 ```

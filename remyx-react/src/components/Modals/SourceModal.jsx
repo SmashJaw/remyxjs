@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { ModalOverlay } from './ModalOverlay.jsx'
 import { CodeEditor } from './CodeEditor/CodeEditor.jsx'
 import { htmlToMarkdown, markdownToHtml, formatHTML } from '@remyx/core'

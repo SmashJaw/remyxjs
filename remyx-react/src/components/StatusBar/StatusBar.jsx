@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ICON_MAP } from '../../icons/index.jsx'
 
 export function StatusBar({ engine, position = 'bottom' }) {

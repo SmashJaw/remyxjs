@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { MenuItem } from './MenuItem.jsx'
 
 export function MenuBar({ config, engine, selectionState, onOpenModal }) {
