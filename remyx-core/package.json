@@ -1,0 +1,31 @@
+{
+  "name": "@remyx/core",
+  "version": "0.23.0",
+  "type": "module",
+  "main": "./dist/remyx-core.cjs",
+  "module": "./dist/remyx-core.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/remyx-core.js",
+      "require": "./dist/remyx-core.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": ["dist"],
+  "dependencies": {
+    "mammoth": "^1.11.0",
+    "marked": "^15.0.0",
+    "pdfjs-dist": "^5.5.207",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  }
+}
