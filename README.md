@@ -81,14 +81,6 @@ packages/
   remyx-react/    → @remyx/react        React components + hooks + TS types
 ```
 
-## Development
-
-```bash
-npm install          # install all workspace dependencies
-npm run dev          # start Vite dev server with demo app
-npm run build        # build all packages
-```
-
 ## Documentation
 
 - [@remyx/react README](./remyx-react/README.md) — full API docs, props, theming, plugins, toolbar, menu bar
