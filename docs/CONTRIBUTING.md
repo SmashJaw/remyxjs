@@ -30,8 +30,8 @@ Thank you for your interest in contributing to Remyx Editor. This guide covers e
 
 ```bash
 # Clone the repository
-git clone https://github.com/remyx-editor/remyx.git
-cd remyx
+git clone https://github.com/SmashJaw/remyx-editor.git
+cd remyx-editor
 
 # Install dependencies (npm workspaces will link all packages automatically)
 npm install
@@ -480,4 +480,4 @@ to `engine.mount(element)`.
 
 ## Questions?
 
-If anything in this guide is unclear or you need help, open an issue on the [GitHub issue tracker](https://github.com/remyx-editor/remyx/issues). We are happy to assist.
+If anything in this guide is unclear or you need help, open an issue on the [GitHub issue tracker](https://github.com/SmashJaw/remyx-editor/issues). We are happy to assist.

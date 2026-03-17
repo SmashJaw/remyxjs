@@ -24,6 +24,10 @@ export function useAutosave(engine, config) {
   const [lastSaved, setLastSaved] = useState(null)
   const [recoveryData, setRecoveryData] = useState(null)
   const managerRef = useRef(null)
+  const onRecoverRef = useRef(config?.onRecover)
+
+  // Keep onRecover ref fresh without triggering effect re-runs
+  onRecoverRef.current = config?.onRecover
 
   // Stabilize config reference to avoid re-creating manager on every render
   const enabled = config?.enabled ?? false
@@ -31,7 +35,6 @@ export function useAutosave(engine, config) {
   const configInterval = config?.interval
   const configDebounce = config?.debounce
   const configProvider = config?.provider
-  const configOnRecover = config?.onRecover
 
   useEffect(() => {
     if (!engine || !enabled) return
@@ -64,7 +67,7 @@ export function useAutosave(engine, config) {
       if (data) {
         setRecoveryData(data)
         engine.eventBus.emit('autosave:recovered', data)
-        configOnRecover?.(data)
+        onRecoverRef.current?.(data)
       }
     })
 

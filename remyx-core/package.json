@@ -7,13 +7,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/remyx-editor/remyx.git",
+    "url": "https://github.com/SmashJaw/remyx-editor.git",
     "directory": "packages/remyx-core"
   },
   "bugs": {
-    "url": "https://github.com/remyx-editor/remyx/issues"
+    "url": "https://github.com/SmashJaw/remyx-editor/issues"
   },
-  "homepage": "https://github.com/remyx-editor/remyx/tree/master/packages/remyx-core#readme",
+  "homepage": "https://github.com/SmashJaw/remyx-editor/tree/master/packages/remyx-core#readme",
   "type": "module",
   "main": "./dist/remyx-core.cjs",
   "module": "./dist/remyx-core.js",

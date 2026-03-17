@@ -75,6 +75,8 @@ export function useRemyxEditor(targetRef, options = {}) {
   const [ready, setReady] = useState(false)
   const lastValueRef = useRef('')
   const cleanupRef = useRef(null)
+  const formRef = useRef(null)
+  const syncToTextareaRef = useRef(null)
 
   const initEditor = useCallback(() => {
     const target = targetRef.current
@@ -157,13 +159,18 @@ export function useRemyxEditor(targetRef, options = {}) {
         }
       }
 
-      // Wire up form submit to sync
+      // Wire up form submit to sync — store refs so cleanup works
+      // even if DOM is removed before React unmount
       const form = target.closest('form')
       if (form) {
+        formRef.current = form
+        syncToTextareaRef.current = syncToTextarea
         form.addEventListener('submit', syncToTextarea)
         const prevCleanup = cleanupRef.current
         cleanupRef.current = () => {
-          form.removeEventListener('submit', syncToTextarea)
+          formRef.current?.removeEventListener('submit', syncToTextareaRef.current)
+          formRef.current = null
+          syncToTextareaRef.current = null
           prevCleanup()
         }
       }

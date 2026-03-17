@@ -30,6 +30,7 @@ export class History {
     this._debounceTimer = null
     this._isPerformingUndoRedo = false
     this._lastSnapshot = null
+    this._lastNormalized = null
   }
 
   /**
@@ -102,7 +103,10 @@ export class History {
    */
   _takeSnapshot() {
     const html = this.engine.element.innerHTML
-    if (html === this._lastSnapshot) return
+    // Normalize whitespace for comparison to catch browser-induced
+    // changes like &nbsp; ↔ space that produce visually identical content
+    const normalized = html.replace(/\s+/g, ' ').trim()
+    if (normalized === this._lastNormalized) return
 
     const bookmark = this.engine.selection.save()
     this._undoStack.push({ html, bookmark })
@@ -111,6 +115,7 @@ export class History {
     }
     this._redoStack = []
     this._lastSnapshot = html
+    this._lastNormalized = normalized
   }
 
   /**
@@ -160,6 +165,7 @@ export class History {
     const sanitizedHtml = this.engine.sanitizer.sanitize(state.html)
     this.engine.element.innerHTML = sanitizedHtml
     this._lastSnapshot = sanitizedHtml
+    this._lastNormalized = sanitizedHtml.replace(/\s+/g, ' ').trim()
 
     if (state.bookmark) {
       this.engine.selection.restore(state.bookmark)
@@ -191,6 +197,7 @@ export class History {
     const sanitizedHtml = this.engine.sanitizer.sanitize(state.html)
     this.engine.element.innerHTML = sanitizedHtml
     this._lastSnapshot = sanitizedHtml
+    this._lastNormalized = sanitizedHtml.replace(/\s+/g, ' ').trim()
 
     if (state.bookmark) {
       this.engine.selection.restore(state.bookmark)
@@ -226,5 +233,6 @@ export class History {
     this._undoStack = []
     this._redoStack = []
     this._lastSnapshot = null
+    this._lastNormalized = null
   }
 }

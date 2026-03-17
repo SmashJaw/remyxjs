@@ -26,4 +26,31 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  {
+    files: ['**/*.test.{js,jsx}', '**/*.spec.{js,jsx}', '**/tests/**/*.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+        vi: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['vite.config.{js,ts}', '**/vite.config.{js,ts}', 'e2e/**/*.{js,ts}'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        process: 'readonly',
+        __dirname: 'readonly',
+      },
+    },
+  },
 ])

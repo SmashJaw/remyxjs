@@ -180,16 +180,26 @@ export function registerTableCommands(engine) {
 
       // Add missing cells in subsequent rows
       if (rowspan > 1) {
+        // Compute the visual column index once from the original row
+        const targetColIndex = getCellIndex(td)
         let currentRow = tr.nextElementSibling
         for (let r = 1; r < rowspan; r++) {
           if (!currentRow) break
           const rowCellTag = currentRow.closest('thead') ? 'th' : 'td'
+          // Find the correct insertion point in this row by walking its cells
+          let insertRef = null
+          let colAccum = 0
+          for (const cell of currentRow.cells) {
+            if (colAccum >= targetColIndex) {
+              insertRef = cell
+              break
+            }
+            colAccum += cell.colSpan || 1
+          }
           for (let c = 0; c < colspan; c++) {
             const newCell = document.createElement(rowCellTag)
             newCell.innerHTML = '<br>'
-            const cellIndex = getCellIndex(td)
-            const refCell = currentRow.cells[cellIndex]
-            currentRow.insertBefore(newCell, refCell)
+            currentRow.insertBefore(newCell, insertRef)
           }
           currentRow = currentRow.nextElementSibling
         }

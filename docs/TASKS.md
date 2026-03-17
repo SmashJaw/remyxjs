@@ -2,7 +2,7 @@
 
 # Task Reference — Remyx Editor
 
-**Last updated:** 2026-03-16
+**Last updated:** 2026-03-17
 **Version:** 0.27.0
 
 A single reference for every bug, security fix, cleanup item, and optimization across the Remyx Editor monorepo. Say **"do task 42"** or **"do Sanitizer LRU Cache"** and it gets done.
@@ -40,13 +40,13 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 | 14 | Form submit listener accumulation | Low | ✅ | react | `usePortalAttachment.js` |
 | 15 | Stale selection offset in `restore()` | Low | ✅ | core | `Selection.js` |
 | 16 | Unused `sourceMode` state variable | Low | ✅ | react | `RemyxEditor.jsx` |
-| 140 | Clipboard file upload race condition (multi-file) | High | 🔲 | core | `Clipboard.js` |
-| 141 | `splitCell` wrong column in multi-row tables | High | 🔲 | core | `tables.js` |
-| 142 | `useAutosave` stale `onRecover` closure | Medium | 🔲 | react | `useAutosave.js` |
-| 143 | History stale snapshot comparison (whitespace) | Medium | 🔲 | core | `History.js` |
-| 144 | `useRemyxEditor` form submit listener leak on DOM removal | Medium | 🔲 | react | `useRemyxEditor.js` |
+| 140 | Clipboard file upload race condition (multi-file) | High | ✅ | core | `Clipboard.js` |
+| 141 | `splitCell` wrong column in multi-row tables | High | ✅ | core | `tables.js` |
+| 142 | `useAutosave` stale `onRecover` closure | Medium | ✅ | react | `useAutosave.js` |
+| 143 | History stale snapshot comparison (whitespace) | Medium | ✅ | core | `History.js` |
+| 144 | `useRemyxEditor` form submit listener leak on DOM removal | Medium | ✅ | react | `useRemyxEditor.js` |
 
-**16 resolved, 5 open.**
+**21 resolved, 0 open.**
 
 ---
 
@@ -225,11 +225,11 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 
 | Category | Total | Done | Open |
 |----------|-------|------|------|
-| Bugs | 21 | 16 | 5 |
+| Bugs | 21 | 21 | 0 |
 | Security | 36 | 27 | 8 |
 | Cleanup | 52 | 42 | 10 |
 | Optimizations | 56 | 21 | 35 |
-| **Total** | **165** | **106** | **58** |
+| **Total** | **165** | **111** | **53** |
 
 ---
 
@@ -238,8 +238,6 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 ### High
 | # | Title | Category |
 |---|-------|----------|
-| 140 | Clipboard file upload race condition (multi-file) | BUG |
-| 141 | `splitCell` wrong column in multi-row tables | BUG |
 | 145 | AutolinkPlugin regex DoS (catastrophic backtracking) | SEC |
 | 146 | LinkModal protocol blacklist incomplete (XSS bypass) | SEC |
 | 110 | Replace `selectionState` prop drilling with Context | OPT |
@@ -258,9 +256,6 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 ### Medium
 | # | Title | Category |
 |---|-------|----------|
-| 142 | `useAutosave` stale `onRecover` closure | BUG |
-| 143 | History stale snapshot comparison (whitespace) | BUG |
-| 144 | `useRemyxEditor` form submit listener leak on DOM removal | BUG |
 | 39 | Async file upload race condition | SEC |
 | 46 | Pin third-party dependency versions | SEC |
 | 147 | ImageModal allows `data:image/svg+xml` XSS | SEC |

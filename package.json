@@ -1,0 +1,53 @@
+{
+  "name": "remyx-packages",
+  "private": true,
+  "version": "0.27.0",
+  "type": "module",
+  "workspaces": [
+    "remyx-core",
+    "remyx-react",
+    "create-remyx"
+  ],
+  "scripts": {
+    "build:core": "cd remyx-core && npm run build",
+    "build:react": "cd remyx-react && npm run build",
+    "build:all": "npx nx run-many --target=build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "analyze:core": "cd remyx-core && ANALYZE=true npm run build",
+    "analyze:react": "cd remyx-react && ANALYZE=true npm run build",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "e2e": "npx playwright test",
+    "e2e:report": "npx playwright show-report coverage/e2e"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
+    "@babel/preset-react": "^7.28.5",
+    "@eslint/js": "9.39.1",
+    "@nx/js": "^22.5.4",
+    "@nx/eslint": "22.5.4",
+    "@nx/jest": "22.5.4",
+    "@nx/playwright": "22.5.4",
+    "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/user-event": "14.6.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "babel-jest": "^30.3.0",
+    "eslint": "9.39.1",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-refresh": "0.4.24",
+    "globals": "16.5.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "nx": "22.5.4"
+  }
+}

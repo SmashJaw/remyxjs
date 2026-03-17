@@ -42,17 +42,22 @@ export class Clipboard {
     // Handle importable document files (PDF, DOCX, etc.)
     const importableFiles = files.filter((f) => !f.type.startsWith('image/') && isImportableFile(f))
     if (importableFiles.length > 0) {
-      importableFiles.filter((f) => !this._exceedsMaxFileSize(f)).forEach((file) => {
-        convertDocument(file)
-          .then((html) => {
-            const sanitized = this.engine.sanitizer.sanitize(html)
-            this.engine.selection.insertHTML(sanitized)
-            this.engine.eventBus.emit('content:change')
-          })
-          .catch((err) => {
-            console.warn('Document import failed on paste:', err.message)
-          })
-      })
+      // Serialize async conversions to prevent race conditions with insertHTML
+      const validFiles = importableFiles.filter((f) => !this._exceedsMaxFileSize(f))
+      let chain = Promise.resolve()
+      for (const file of validFiles) {
+        chain = chain.then(() =>
+          convertDocument(file)
+            .then((html) => {
+              const sanitized = this.engine.sanitizer.sanitize(html)
+              this.engine.selection.insertHTML(sanitized)
+              this.engine.eventBus.emit('content:change')
+            })
+            .catch((err) => {
+              console.warn('Document import failed on paste:', err.message)
+            })
+        )
+      }
       return
     }
 
