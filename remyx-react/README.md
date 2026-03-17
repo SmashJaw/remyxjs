@@ -1566,7 +1566,7 @@ engine.on('content:change', () => {
 engine.destroy();
 ```
 
-`@remyxjs/core` exports 80+ named symbols — the full engine, all 16 command register functions, plugin system, utilities (markdown, paste cleaning, export, fonts, themes, toolbar config), constants, and `defineConfig()`. See the [core package README](../remyx-core/README.md) for the full API.
+`@remyxjs/core` exports 90+ named symbols — the full engine, all 17 command register functions, plugin system (including syntax highlighting), autosave providers, utilities (markdown, paste cleaning, export, fonts, themes, toolbar config), constants, and `defineConfig()`. See the [core package README](../remyx-core/README.md) for the full API.
 
 ## Architecture
 

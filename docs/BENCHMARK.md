@@ -1,6 +1,6 @@
 # Performance Benchmark
 
-> Measured on 2026-03-16 at commit `08d7117` (v0.24.0, bundle sizes approximate as of v0.27.0)
+> Measured on 2026-03-16 at commit `08d7117` (v0.24.0). Bundle sizes and file counts updated as of v0.27.0.
 > Environment: Apple M3 Max, 48 GB RAM, Node v24.2.0, Vite 7.3.1
 
 ---
@@ -9,15 +9,10 @@
 
 | Metric | Count |
 |---|---|
-| Source files (core JS) | 92 |
+| Source files (core JS) | 62 |
 | Source files (core CSS) | 7 |
-| Source files (react JSX) | 28 |
-| Source files (react JS) | 12 |
-| Test files | 45 |
-| Lines of code (core) | 14,195 |
-| Lines of code (react) | 4,441 |
-| Lines of code (tests) | 8,146 |
-| **Total source lines** | **26,782** |
+| Source files (react JSX/JS) | 50 |
+| Test files | 49 |
 
 ---
 
@@ -100,8 +95,8 @@ All times are wall-clock averages over 3 runs.
 
 | Metric | Value |
 |---|---|
-| Test suites | 45 |
-| Total tests | 862 |
+| Test suites | 49 |
+| Total tests | 862+ |
 | Cold run (no cache) | **1.8s** (wall: 3.2s) |
 | Warm run (cached) | **1.5s** (wall: 2.4s) |
 | Tests per second | ~453 (cold) / ~543 (warm) |

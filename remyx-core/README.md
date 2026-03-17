@@ -124,10 +124,13 @@ engine.destroy();
 ```
 @remyxjs/core
   core/           EditorEngine, EventBus, CommandRegistry, Selection,
-                  History, KeyboardManager, Sanitizer, Clipboard, DragDrop
-  commands/       16 register functions (formatting, headings, lists, etc.)
-  plugins/        PluginManager, createPlugin, 4 built-in plugins
-  utils/          markdown, paste cleaning, export, fonts, themes, toolbar, DOM
+                  History, KeyboardManager, Sanitizer, Clipboard, DragDrop,
+                  AutosaveManager
+  commands/       17 register functions (formatting, headings, lists, slashCommands, etc.)
+  plugins/        PluginManager, createPlugin, 4 built-in plugins (incl. SyntaxHighlight)
+  autosave/       5 storage providers (LocalStorage, SessionStorage, FileSystem, Cloud, Custom)
+  utils/          markdown, paste cleaning, export, fonts, themes, toolbar, DOM,
+                  documentConverter/ (per-format modules)
   constants/      defaults, keybindings, schema, commands
   config/         defineConfig
   themes/         variables.css, light.css, dark.css, ocean.css, forest.css, sunset.css, rose.css

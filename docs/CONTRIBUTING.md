@@ -64,13 +64,17 @@ The core engine contains all editing logic and has zero framework dependencies:
 ```
 packages/remyx-core/src/
   core/             EditorEngine, CommandRegistry, Selection, History, Sanitizer,
-                    EventBus, KeyboardManager, Clipboard, DragDrop
-  commands/         One file per command group (formatting, lists, tables, etc.)
-  plugins/          Plugin system (createPlugin, PluginManager, built-in plugins)
-  utils/            DOM helpers, paste cleaning, theme config, document converters
+                    EventBus, KeyboardManager, Clipboard, DragDrop, AutosaveManager
+  commands/         One file per command group (formatting, lists, tables, slashCommands, etc.)
+  plugins/          Plugin system (createPlugin, PluginManager, built-in plugins incl.
+                    syntaxHighlight/)
+  autosave/         Storage providers (LocalStorage, SessionStorage, FileSystem, Cloud, Custom)
+  utils/            DOM helpers, paste cleaning, theme config, toolbar config,
+                    documentConverter/ (per-format modules), export utilities
   constants/        Command names, keybindings, defaults, sanitization schema
   config/           defineConfig helper
-  index.js          Public API re-exports
+  themes/           CSS theme files (variables, light, dark, ocean, forest, sunset, rose)
+  index.js          Public API re-exports (~90 named exports)
 ```
 
 ### @remyxjs/react
@@ -79,8 +83,14 @@ React bindings that wrap `@remyxjs/core`:
 
 ```
 packages/remyx-react/src/
-  components/       RemyxEditor, Toolbar, modals
-  hooks/            useEditor, useSelection, useResolvedConfig, usePortalAttachment, etc.
+  components/       RemyxEditor, Toolbar/, MenuBar/, StatusBar/, EditArea/,
+                    Modals/, ContextMenu/, CommandPalette/, SlashCommandPalette/,
+                    RecoveryBanner/, SaveStatus/, ErrorBoundary
+  hooks/            useRemyxEditor, useEditorEngine, useSelection, useAutosave,
+                    useResolvedConfig, usePortalAttachment, useContextMenu,
+                    useSlashCommands, useDragDrop, useEditorRect, useModal
+  config/           RemyxConfigProvider
+  icons/            SVG icon components
   index.js          Public API re-exports
 ```
 
@@ -135,8 +145,8 @@ npm run test:coverage
 
 | Directory | Runner | Description |
 |---|---|---|
-| `remyx-core/src/__tests__/` | Jest | Core engine, commands, plugins, utilities |
-| `remyx-react/src/__tests__/` | Jest | React hooks, components, config provider |
+| `packages/remyx-core/src/__tests__/` | Jest | Core engine, commands, plugins, utilities |
+| `packages/remyx-react/src/__tests__/` | Jest | React hooks, components, config provider |
 
 #### Writing tests
 
