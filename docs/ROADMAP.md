@@ -211,15 +211,21 @@ Interactive CLI tool to help users build custom WYSIWYG editors with the right c
 - Framework-specific bindings for reactivity, lifecycle, and two-way data binding
 - Web Component wrapper (`<remyx-editor>`) for framework-agnostic embedding
 
-## Slash Commands & Command Palette
+## ~~Slash Commands &~~ Command Palette — **Shipped in v0.25.0**
 
-- `/` trigger opens a searchable command palette inline at the caret
-- Built-in commands: heading, list, table, code block, divider, image, callout, toggle
-- Grouped categories with icons: Text, Media, Embeds, Layout, Advanced
-- Fuzzy search — type `/tbl` to match "Table"
-- Custom slash commands via `slashCommands` prop or plugin API
+- ~~`/` trigger opens a searchable command palette inline at the caret~~ (removed — too easy to trigger accidentally)
+- `Mod+Shift+P` opens a global command palette overlay with search input
+- Toolbar button (`commandPalette`) opens the same palette
+- 19 built-in commands across 5 categories: Text, Lists, Media, Layout, Advanced
+- Fuzzy search across labels, descriptions, and keywords
+- Keyboard navigation (Arrow keys, Enter to execute, Escape to close)
+- `commandPalette` prop to enable/disable (default `true`)
+- `SLASH_COMMAND_ITEMS` and `filterSlashItems()` exported from `@remyx/core` for custom integrations
+
+### Future enhancements
+
 - Recently-used commands pinned to the top of the palette
-- `Cmd+K` / `Ctrl+K` opens a global command palette (toolbar actions, formatting, navigation)
+- Custom command items via prop or plugin API
 
 ## Block-Based Editing
 

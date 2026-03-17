@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Command Palette** — Searchable overlay listing all editor commands, organized by category (Text, Lists, Media, Layout, Advanced). Open via `Mod+Shift+P` keyboard shortcut or the new `commandPalette` toolbar button. Supports fuzzy search across labels, descriptions, and keywords. Includes `SLASH_COMMAND_ITEMS` catalog (19 built-in commands) and `filterSlashItems()` utility exported from `@remyx/core`. New `commandPalette` prop on `RemyxEditor` (default `true`).
 - **Comprehensive Jest test suite** — 42 test files with 815 tests covering core engine, commands (16 modules), plugins (4), utilities (5), React hooks (4), React components (2), and config provider (1). Migrated from Vitest to Jest for consistent tooling.
 - **Playwright e2e test suite** — 8 spec files covering editor basics, formatting, toolbar, keyboard shortcuts, themes, accessibility, fullscreen, and modals.
 - **Unit test coverage** — Statements 82.85%, Branches 74.11%, Functions 77.41%, Lines 85.21% (up from ~67%).

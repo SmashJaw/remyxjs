@@ -4,6 +4,7 @@ import { useEditorEngine } from '../hooks/useEditorEngine.js'
 import { useSelection } from '../hooks/useSelection.js'
 import { useModal } from '../hooks/useModal.js'
 import { useContextMenu } from '../hooks/useContextMenu.js'
+
 import { useResolvedConfig } from '../hooks/useResolvedConfig.js'
 import { usePortalAttachment } from '../hooks/usePortalAttachment.js'
 import { useEditorRect } from '../hooks/useEditorRect.js'
@@ -18,7 +19,9 @@ import { StatusBar, WordCountButton } from './StatusBar/StatusBar.jsx'
 import { ContextMenu } from './ContextMenu/ContextMenu.jsx'
 import { EditorErrorBoundary } from './ErrorBoundary.jsx'
 
+
 // Lazy-loaded modal components — only loaded when opened
+const CommandPalette = React.lazy(() => import('./CommandPalette/CommandPalette.jsx').then(m => ({ default: m.CommandPalette })))
 const LinkModal = React.lazy(() => import('./Modals/LinkModal.jsx').then(m => ({ default: m.LinkModal })))
 const ImageModal = React.lazy(() => import('./Modals/ImageModal.jsx').then(m => ({ default: m.ImageModal })))
 const TablePickerModal = React.lazy(() => import('./Modals/TablePickerModal.jsx').then(m => ({ default: m.TablePickerModal })))
@@ -39,6 +42,7 @@ export default function RemyxEditor(props) {
     showFloatingToolbar, showContextMenu, fonts, googleFonts,
     statusBar, customTheme, toolbarItemTheme, sanitize, shortcuts,
     baseHeadingLevel, menuBarConfig, effectiveToolbar, onError, errorFallback,
+    showCommandPalette,
   } = useResolvedConfig(props)
 
   const editAreaRef = useRef(null)
@@ -126,8 +130,29 @@ export default function RemyxEditor(props) {
   }, [engine, onError])
 
   const handleOpenModal = useCallback((name, data) => {
+    if (name === 'commandPalette') {
+      setCommandPaletteOpen(true)
+      return
+    }
     openModal(name, data)
   }, [openModal])
+
+  // Command palette state
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+
+  // Handle Mod+K shortcut for command palette
+  useEffect(() => {
+    if (!engine || !showCommandPalette) return
+    const handleKeyDown = (e) => {
+      const mod = navigator.platform.includes('Mac') ? e.metaKey : e.ctrlKey
+      if (mod && e.shiftKey && (e.key === 'p' || e.key === 'P')) {
+        e.preventDefault()
+        setCommandPaletteOpen(prev => !prev)
+      }
+    }
+    engine.element?.addEventListener('keydown', handleKeyDown)
+    return () => engine.element?.removeEventListener('keydown', handleKeyDown)
+  }, [engine, showCommandPalette])
 
   const editAreaStyle = useMemo(() => ({
     minHeight: minHeight || height,
@@ -291,6 +316,14 @@ export default function RemyxEditor(props) {
             open={modals.export.open}
             onClose={() => closeModal('export')}
             engine={engine}
+          />
+        )}
+        {showCommandPalette && commandPaletteOpen && (
+          <CommandPalette
+            open={commandPaletteOpen}
+            onClose={() => setCommandPaletteOpen(false)}
+            engine={engine}
+            onOpenModal={handleOpenModal}
           />
         )}
       </Suspense>

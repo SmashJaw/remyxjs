@@ -220,6 +220,14 @@ export const Toolbar = React.memo(function Toolbar({ config, engine, selectionSt
       )
     }
 
+    if (command === 'commandPalette') {
+      return (
+        <ToolbarButton key={command} command={command} tooltip={TOOLTIP_MAP[command]}
+          onClick={() => onOpenModal?.('commandPalette')}
+          shortcutLabel={getShortcutLabel(command)} itemStyle={itemStyle} />
+      )
+    }
+
     // Regular button commands
     if (BUTTON_COMMANDS.has(command)) {
       const isActive = getCommandActiveState(command, selectionState, engine)

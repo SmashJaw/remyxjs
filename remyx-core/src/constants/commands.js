@@ -25,6 +25,7 @@ export const TOOLTIP_MAP = {
   toggleMarkdown: 'Toggle Markdown', export: 'Export Document',
   foreColor: 'Text Color', backColor: 'Background Color',
   headings: 'Block Type', fontFamily: 'Font Family', fontSize: 'Font Size',
+  commandPalette: 'Command Palette',
 }
 
 export const SHORTCUT_MAP = {
@@ -32,6 +33,7 @@ export const SHORTCUT_MAP = {
   strikethrough: 'mod+Shift+X', undo: 'mod+Z', redo: 'mod+Shift+Z',
   insertLink: 'mod+K', findReplace: 'mod+F',
   fullscreen: 'mod+Shift+F', sourceMode: 'mod+Shift+U',
+  commandPalette: 'mod+Shift+P',
 }
 
 /** Commands that trigger modals instead of direct execution */

@@ -14,3 +14,4 @@ export { useRemyxConfig } from './hooks/useRemyxConfig.js'
 
 // Error boundary
 export { EditorErrorBoundary } from './components/ErrorBoundary.jsx'
+

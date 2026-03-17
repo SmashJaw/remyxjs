@@ -8,7 +8,7 @@ export const DEFAULT_TOOLBAR = [
   ['outdent', 'indent'],
   ['link', 'image', 'attachment', 'importDocument', 'table', 'embedMedia', 'blockquote', 'codeBlock', 'horizontalRule'],
   ['subscript', 'superscript'],
-  ['findReplace', 'toggleMarkdown', 'sourceMode', 'export', 'fullscreen'],
+  ['findReplace', 'toggleMarkdown', 'sourceMode', 'export', 'commandPalette', 'fullscreen'],
 ]
 
 export const DEFAULT_FONTS = [

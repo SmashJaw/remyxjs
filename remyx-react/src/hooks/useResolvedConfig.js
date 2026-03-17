@@ -58,6 +58,7 @@ export function useResolvedConfig(props) {
     baseHeadingLevel,
     onError,
     errorFallback,
+    commandPalette: showCommandPalette = true,
   } = merged
 
   // Resolve menu bar config
@@ -111,5 +112,6 @@ export function useResolvedConfig(props) {
     effectiveToolbar,
     onError,
     errorFallback,
+    showCommandPalette,
   }
 }

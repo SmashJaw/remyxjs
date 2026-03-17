@@ -119,6 +119,7 @@ export interface RemyxEditorProps {
   toolbarItemTheme?: Record<string, Record<string, string>>
   floatingToolbar?: boolean
   contextMenu?: boolean
+  commandPalette?: boolean
   plugins?: Plugin[]
   uploadHandler?: (file: File) => Promise<string>
   shortcuts?: Record<string, string>
@@ -182,6 +183,7 @@ export interface RemyxConfig {
   statusBar?: 'bottom' | 'top' | 'popup' | false
   floatingToolbar?: boolean
   contextMenu?: boolean
+  commandPalette?: boolean
   fonts?: string[]
   googleFonts?: string[]
   outputFormat?: 'html' | 'markdown'

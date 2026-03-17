@@ -17,6 +17,7 @@ A feature-rich WYSIWYG editor built on a framework-agnostic core with first-clas
 - **Find & replace** — Search with case sensitivity, navigate matches, replace one or all
 - **Source mode** — Toggle raw HTML editing
 - **Fullscreen mode** — Distraction-free editing
+- **Command palette** — Searchable overlay with all editor commands (`Mod+Shift+P` or toolbar button), fuzzy search, keyboard navigation
 - **Keyboard shortcuts** — 17+ default shortcuts, customizable via API
 - **Accessibility** — Skip navigation, focus trapping in modals, ARIA roles, keyboard-navigable toolbar
 - **Security** — XSS-safe HTML sanitizer, dangerous tag removal, event handler blocking, CSS injection prevention

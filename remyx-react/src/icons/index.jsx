@@ -280,6 +280,13 @@ export const ExportIcon = icon(
   </>
 )
 
+export const CommandPaletteIcon = icon(
+  <>
+    <polyline points="4 17 10 11 4 5" />
+    <line x1="12" y1="19" x2="20" y2="19" />
+  </>
+)
+
 export const ToggleMarkdownIcon = filled(
   <>
     <path d="M3 5h18v14H3V5zm2 2v10h14V7H5z" fill="none" stroke="currentColor" strokeWidth="1.5" />
@@ -386,4 +393,5 @@ export const ICON_MAP = {
   importDocument: ImportDocumentIcon,
   toggleMarkdown: ToggleMarkdownIcon,
   export: ExportIcon,
+  commandPalette: CommandPaletteIcon,
 }

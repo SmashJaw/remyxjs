@@ -490,6 +490,24 @@ registerImportDocumentCommands(engine);
 engine.executeCommand('importDocument');
 ```
 
+### Command Palette
+
+The command palette provides a searchable overlay listing all available editor commands. It is a React-layer feature (see `@remyx/react`), but the command catalog and filter logic live in `@remyx/core`:
+
+```js
+import { SLASH_COMMAND_ITEMS, filterSlashItems } from '@remyx/core';
+
+// Default catalog of ~19 command items across 5 categories:
+// Text, Lists, Media, Layout, Advanced
+console.log(SLASH_COMMAND_ITEMS);
+
+// Filter items by query (fuzzy substring match on label, description, keywords)
+const matches = filterSlashItems(SLASH_COMMAND_ITEMS, 'head');
+// → [{ id: 'heading1', label: 'Heading 1', ... }, { id: 'heading2', ... }, ...]
+```
+
+Each item has the shape `{ id, label, description, icon, keywords, category, action }`. The `action` function receives `(engine, openModal?)` and executes the command.
+
 ## Plugin System
 
 ### Creating Plugins
@@ -732,6 +750,7 @@ engine.keyboard.getShortcutLabel('mod+b');      // '⌘B' on Mac, 'Ctrl+B' on Wi
 | Mod+Shift+F | fullscreen |
 | Mod+Z | undo |
 | Mod+Shift+Z | redo |
+| Mod+Shift+P | commandPalette |
 
 ## Sanitizer
 
@@ -1093,6 +1112,10 @@ import {
   MODAL_COMMANDS,       // Commands that open modals
   getShortcutLabel,     // (command) => platform-aware label string
   getCommandActiveState, // (command, selectionState, engine) => boolean
+
+  // Command palette
+  SLASH_COMMAND_ITEMS,  // Default catalog of command palette items
+  filterSlashItems,     // (items, query) => filtered items
 } from '@remyx/core';
 ```
 

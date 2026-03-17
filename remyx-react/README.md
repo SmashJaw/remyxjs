@@ -148,6 +148,7 @@ const [markdown, setMarkdown] = useState('# Hello\n\nStart typing...');
 - **Multi-instance** — unlimited editors per page with full isolation (state, events, DOM, modals)
 - **Import/Export** — PDF, DOCX, Markdown, CSV, and HTML
 - **Paste cleaning** — intelligent cleanup from Word, Google Docs, LibreOffice, Pages, and raw markdown
+- **Command palette** — searchable overlay with all editor commands, opened via `Mod+Shift+P` or toolbar button
 - **Keyboard shortcuts** — customizable with sensible defaults
 - **Accessibility** — semantic HTML, ARIA attributes, keyboard navigation, and focus management
 
@@ -175,6 +176,7 @@ const [markdown, setMarkdown] = useState('# Hello\n\nStart typing...');
 | `toolbarItemTheme` | `object` | — | Per-item toolbar styling |
 | `floatingToolbar` | `boolean` | `true` | Show toolbar on text selection |
 | `contextMenu` | `boolean` | `true` | Show right-click context menu |
+| `commandPalette` | `boolean` | `true` | Enable command palette (Mod+Shift+P or toolbar button) |
 | `plugins` | `Plugin[]` | — | Custom plugins |
 | `uploadHandler` | `(file: File) => Promise<string>` | — | File upload handler |
 | `shortcuts` | `object` | — | Keyboard shortcut overrides |
@@ -362,6 +364,7 @@ const toolbar = createToolbar([
 | `toggleMarkdown` | Button | Toggle markdown mode |
 | `sourceMode` | Button | View/edit HTML source |
 | `export` | Button | Export (PDF, MD, DOCX) |
+| `commandPalette` | Button | Open command palette |
 | `fullscreen` | Button | Toggle fullscreen |
 
 ## Menu Bar
@@ -1140,6 +1143,7 @@ Without custom sanitization, the editor applies these protections by default:
 | `Shift+Tab` | Outdent |
 | `mod+Shift+F` | Fullscreen |
 | `mod+Shift+U` | Source mode |
+| `mod+Shift+P` | Command palette |
 | `mod+,` | Subscript |
 | `mod+.` | Superscript |
 
@@ -1225,6 +1229,28 @@ For a clean writing experience, hide the main toolbar and rely on the floating t
   statusBar={false}
   placeholder="Just start writing..."
   height={500}
+/>
+```
+
+## Command Palette
+
+The command palette provides a searchable overlay listing all available editor commands. Open it via the toolbar button or `Mod+Shift+P` (`Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows/Linux).
+
+```jsx
+<RemyxEditor commandPalette={true} />   {/* enabled (default) */}
+<RemyxEditor commandPalette={false} />  {/* disabled */}
+```
+
+Commands are organized by category (Text, Lists, Media, Layout, Advanced, Commands) and support fuzzy search. The palette includes all built-in commands plus any registered via the engine's command registry.
+
+To add the command palette button to a custom toolbar:
+
+```jsx
+<RemyxEditor
+  toolbar={[
+    ['bold', 'italic', 'underline'],
+    ['commandPalette'],
+  ]}
 />
 ```
 
@@ -1343,6 +1369,9 @@ import { exportAsPDF, exportAsDocx, exportAsMarkdown } from '@remyx/react';
 
 // Plugins
 import { createPlugin, WordCountPlugin, AutolinkPlugin, PlaceholderPlugin } from '@remyx/react';
+
+// Command palette
+import { SLASH_COMMAND_ITEMS, filterSlashItems } from '@remyx/react';
 
 // Config
 import { defineConfig } from '@remyx/react';

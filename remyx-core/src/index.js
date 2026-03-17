@@ -26,6 +26,7 @@ export { registerFullscreenCommands } from './commands/fullscreen.js'
 export { registerMarkdownToggleCommands } from './commands/markdownToggle.js'
 export { registerAttachmentCommands } from './commands/attachments.js'
 export { registerImportDocumentCommands } from './commands/importDocument.js'
+export { SLASH_COMMAND_ITEMS, filterSlashItems } from './commands/slashCommands.js'
 
 // Plugins
 export { PluginManager } from './plugins/PluginManager.js'
