@@ -30,14 +30,14 @@ Thank you for your interest in contributing to Remyx Editor. This guide covers e
 
 ```bash
 # Clone the repository
-git clone https://github.com/SmashJaw/remyx-editor.git
-cd remyx-editor
+git clone https://github.com/remyx-editor/remyx.git
+cd remyx
 
 # Install dependencies (npm workspaces will link all packages automatically)
 npm install
 
-# Build all packages
-npm run build:all
+# Start the development server
+npm run dev
 ```
 
 The `npm install` at the repo root resolves all workspace dependencies, including the internal link between `@remyx/react` and `@remyx/core`. You do not need to run install inside individual packages.
@@ -51,9 +51,9 @@ Remyx Editor is a monorepo managed with **npm workspaces**. All publishable pack
 ```
 remyx/
   packages/
-    remyx-core/        @remyx/core      0.27.0  Framework-agnostic editor engine
-    remyx-react/       @remyx/react     0.27.0  React components and hooks
-    create-remyx/      create-remyx     0.27.0  Reserved for future CLI tool
+    remyx-core/        @remyx/core      0.24.0  Framework-agnostic editor engine
+    remyx-react/       @remyx/react     0.24.0  React components and hooks
+    create-remyx/      create-remyx     0.24.0  Reserved for future CLI tool
     docs/              (not published)           Documentation, changelog, roadmap
 ```
 
@@ -92,22 +92,24 @@ Reserved for a future CLI tool. Project scaffolding has moved to `@remyx/react` 
 
 ## Development Workflow
 
-All commands are run from the **packages root** unless stated otherwise.
+All commands are run from the **repository root** unless stated otherwise.
 
 | Command | Description |
 |---|---|
+| `npm run dev` | Start the Vite dev server (root app with hot reload) |
+| `npm run build` | Build the root app |
 | `npm run build:core` | Build `@remyx/core` only |
 | `npm run build:react` | Build `@remyx/react` only |
-| `npm run build:all` | Build core then react (in dependency order via Nx) |
+| `npm run build:all` | Build core then react (in dependency order) |
 | `npm run lint` | Run ESLint across the entire repo |
-| `npm run typecheck` | Type-check with TypeScript |
+| `npm run preview` | Preview the production build locally |
 
 ### Watch mode for packages
 
 When working on a package in isolation, use the package-level `dev` script which runs Vite in watch mode:
 
 ```bash
-cd remyx-core
+cd packages/remyx-core
 npm run dev    # vite build --watch
 ```
 
@@ -117,7 +119,7 @@ Always build `@remyx/core` before `@remyx/react`, since React depends on Core. T
 
 ### Testing
 
-Jest is the unit test runner. Coverage reports are generated as HTML.
+Jest is the unit test runner and Playwright handles end-to-end tests. Coverage reports are generated as HTML.
 
 ```bash
 # Run all unit tests
@@ -128,14 +130,21 @@ npm run test:watch
 
 # Run unit tests with coverage report (output: coverage/unit/)
 npm run test:coverage
+
+# Run Playwright e2e tests (requires dev server)
+npm run e2e
+
+# View Playwright HTML report
+npm run e2e:report
 ```
 
 #### Test structure
 
 | Directory | Runner | Description |
 |---|---|---|
-| `remyx-core/src/__tests__/` | Jest | Core engine, commands, plugins, utilities |
-| `remyx-react/src/__tests__/` | Jest | React hooks, components, config provider |
+| `packages/remyx-core/src/__tests__/` | Jest | Core engine, commands, plugins, utilities |
+| `packages/remyx-react/src/__tests__/` | Jest | React hooks, components, config provider |
+| `e2e/` | Playwright | Browser-based integration tests |
 
 #### Writing tests
 
@@ -245,7 +254,7 @@ export function MyPlugin() {
      */
     init(api) {
       api.eventBus.on('content:change', () => {
-        // handle content change
+        console.log('Content changed')
       })
     },
 
@@ -471,4 +480,4 @@ to `engine.mount(element)`.
 
 ## Questions?
 
-If anything in this guide is unclear or you need help, open an issue on the [GitHub issue tracker](https://github.com/SmashJaw/remyx-editor/issues). We are happy to assist.
+If anything in this guide is unclear or you need help, open an issue on the [GitHub issue tracker](https://github.com/remyx-editor/remyx/issues). We are happy to assist.

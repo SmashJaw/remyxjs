@@ -25,11 +25,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - **Autosave timing reactivity** — `useAutosave` hook now includes `configKey`, `configInterval`, `configDebounce`, and `configProvider` in its `useEffect` dependency array, so runtime changes to autosave timing props take effect without remounting.
-- **Clipboard multi-file race condition** — Serialized async `convertDocument` calls with a promise chain to prevent interleaved `insertHTML` when pasting multiple document files.
-- **`splitCell` wrong column in multi-row tables** — Pre-compute visual column index once from the original row and walk subsequent rows with a colSpan-aware accumulator to find the correct insertion point.
-- **`useAutosave` stale `onRecover` closure** — Replaced closure capture with a `useRef` so the latest `onRecover` callback is always called, even if the parent re-renders.
-- **History stale snapshot comparison** — Normalize whitespace before comparing snapshots to catch browser-induced `&nbsp;` ↔ space changes that produce visually identical content.
-- **`useRemyxEditor` form submit listener leak** — Store `form` and `syncToTextarea` in refs so cleanup always removes the listener, even if the DOM is removed before React unmount.
 
 ---
 
