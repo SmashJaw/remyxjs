@@ -126,13 +126,57 @@ Built-in themes: `light`, `dark`, `ocean`, `forest`, `sunset`, `rose`.
 ### Add plugins
 
 ```jsx
-import { WordCountPlugin, AutolinkPlugin, PlaceholderPlugin, SyntaxHighlightPlugin } from '@remyxjs/core';
+import { WordCountPlugin, AutolinkPlugin, PlaceholderPlugin, SyntaxHighlightPlugin, TablePlugin } from '@remyxjs/core';
 
 <RemyxEditor
   value={content}
   onChange={setContent}
-  plugins={[WordCountPlugin, AutolinkPlugin, PlaceholderPlugin('Write something...'), SyntaxHighlightPlugin()]}
+  plugins={[
+    WordCountPlugin,
+    AutolinkPlugin,
+    PlaceholderPlugin('Write something...'),
+    SyntaxHighlightPlugin(),
+    TablePlugin(),  // Sortable columns, filters, formulas, resize handles, cell formatting
+  ]}
 />
+```
+
+### Enhanced tables
+
+With the `TablePlugin` enabled, tables gain spreadsheet-like capabilities:
+
+```jsx
+import { TablePlugin } from '@remyxjs/core';
+
+<RemyxEditor
+  value={content}
+  onChange={setContent}
+  plugins={[TablePlugin()]}
+/>
+```
+
+**What you get out of the box:**
+- **Click a column header** to sort ascending/descending (Shift+click for multi-column sort)
+- **Filter icon** on each header cell opens a dropdown for substring filtering
+- **Drag column/row borders** to resize
+- **Type `=SUM(A1:A5)`** in any cell — formulas evaluate on blur
+- **Right-click a cell** to format as number, currency, percentage, or date
+- **Copy/paste from Excel or Google Sheets** — the editor auto-detects TSV and expands the table grid
+
+Programmatic access to all features:
+
+```js
+// Sort the first column descending with numeric comparison
+engine.executeCommand('sortTable', { columnIndex: 0, direction: 'desc', dataType: 'numeric' });
+
+// Filter column 2 to only show rows containing "active"
+engine.executeCommand('filterTable', { columnIndex: 2, filterValue: 'active' });
+
+// Format the focused cell as currency
+engine.executeCommand('formatCell', { format: 'currency', options: { currency: 'EUR' } });
+
+// Toggle the first row between <thead>/<tbody>
+engine.executeCommand('toggleHeaderRow');
 ```
 
 ### Enable autosave
@@ -196,7 +240,7 @@ engine.executeCommand('heading', 2);
 engine.destroy();
 ```
 
-See the full [@remyxjs/core README](./remyx-core/README.md) for the complete engine API, all 40+ commands, plugin system, selection API, sanitizer, theming, toolbar config, utilities, and framework wrapper guide.
+See the full [@remyxjs/core README](./remyx-core/README.md) for the complete engine API, all 50+ commands, plugin system, selection API, sanitizer, theming, toolbar config, utilities, and framework wrapper guide.
 
 ## Architecture
 
@@ -212,7 +256,7 @@ See the full [@remyxjs/core README](./remyx-core/README.md) for the complete eng
 | | `@remyxjs/core` | `@remyxjs/react` |
 | --- | --- | --- |
 | Editor engine | Yes | Re-exports from core |
-| Commands (40+) | Yes | Re-exports from core |
+| Commands (50+) | Yes | Re-exports from core |
 | Plugin system | Yes | Re-exports from core |
 | Utilities | Yes | Re-exports from core |
 | CSS themes | Yes | Additional component styles |
@@ -255,8 +299,8 @@ npm run build:all
 npm run build:core
 npm run build:react
 
-# Run tests (1314 unit tests via Vitest)
-npm test
+# Run tests
+npm test       # 1285 unit tests via Vitest
 
 # Run tests in watch mode
 npm run test:watch

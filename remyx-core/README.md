@@ -410,17 +410,121 @@ engine.executeCommand('mergeCells', { cells: [cell1, cell2] });
 engine.executeCommand('splitCell');
 ```
 
+#### Table command reference
+
+| Command | Arguments | Description |
+| --- | --- | --- |
+| `insertTable` | `{ rows, cols }` | Insert a table with `<thead>` header row. Default 3x3. |
+| `addRowBefore` | — | Insert a row above the current cell |
+| `addRowAfter` | — | Insert a row below the current cell |
+| `addColBefore` | — | Insert a column to the left |
+| `addColAfter` | — | Insert a column to the right |
+| `deleteRow` | — | Delete the current row (removes table if last row) |
+| `deleteCol` | — | Delete the current column (removes table if last column) |
+| `deleteTable` | — | Delete the entire table |
+| `mergeCells` | `{ cells: [el, el, ...] }` | Merge an array of cell elements |
+| `splitCell` | — | Split a merged cell back into individual cells |
+| `toggleHeaderRow` | — | Convert first row to/from `<thead>` with `<th>` cells |
+| `sortTable` | `{ columnIndex, direction, dataType }` or `{ keys: [...] }` | Sort rows. Direction: `'asc'` or `'desc'`. DataType: `'alphabetical'`, `'numeric'`, or `'date'` (auto-detected if omitted). Use `keys` array for multi-column sort. |
+| `filterTable` | `{ columnIndex, filterValue }` | Hide rows where the cell at `columnIndex` doesn't contain `filterValue` (case-insensitive substring match). Pass empty string to clear a single column filter. |
+| `clearTableFilters` | — | Remove all column filters and show all rows |
+| `formatCell` | `{ format, options }` | Format the focused cell. Format: `'number'`, `'currency'`, `'percentage'`, `'date'`. Options: `{ decimals, currency, dateStyle }`. |
+| `evaluateFormulas` | — | Re-evaluate all formula cells in the focused table |
+
+#### Sort data types
+
+The sort command auto-detects the data type of a column by sampling its values:
+- **numeric** — if >70% of values parse as numbers
+- **date** — if >70% of values parse as valid dates
+- **alphabetical** — default, uses locale-aware `localeCompare`
+
+You can override auto-detection by passing `dataType` explicitly, or provide a global custom comparator via `engine.options.tableSortComparator`:
+
+```js
+engine.options.tableSortComparator = (a, b, dataType, columnIndex) => {
+  // Custom comparison — return negative, zero, or positive
+  return a.localeCompare(b, 'de'); // German locale sort
+};
+```
+
 #### Formulas
 
-Cells starting with `=` are treated as formulas. The formula is stored in a `data-formula` attribute and the computed result is displayed as the cell's text content.
+Cells starting with `=` are treated as formulas when the `TablePlugin` is active. The formula is stored in a `data-formula` attribute and the computed result is displayed as the cell's text content. On focus, the formula text is shown for editing; on blur, it is re-evaluated.
 
-**Supported functions:** `SUM`, `AVERAGE`, `COUNT`, `MIN`, `MAX`, `IF`, `CONCAT`
+**Supported functions:**
+
+| Function | Description | Example |
+| --- | --- | --- |
+| `SUM` | Sum all values in a range | `=SUM(A1:A10)` |
+| `AVERAGE` | Arithmetic mean of values | `=AVERAGE(B2:B8)` |
+| `COUNT` | Count non-empty cells | `=COUNT(A1:A20)` |
+| `MIN` | Smallest value in a range | `=MIN(C1:C5)` |
+| `MAX` | Largest value in a range | `=MAX(C1:C5)` |
+| `IF` | Conditional value | `=IF(A1>10, "high", "low")` |
+| `CONCAT` | Join values into a string | `=CONCAT(A1, " ", B1)` |
 
 **Cell references:** A1 notation (e.g., `A1`, `B3`, `AA1`), ranges (e.g., `A1:A5`, `B2:D4`)
 
 **Operators:** `+`, `-`, `*`, `/`, `>`, `<`, `>=`, `<=`, `==`
 
-**Examples:** `=SUM(A1:A5)`, `=AVERAGE(B2:B8)`, `=A1+B1*2`, `=IF(A1>10, "high", "low")`
+**Formula examples:**
+
+```
+=SUM(A2:A10)           Sum of column A, rows 2-10
+=AVERAGE(B2:B8)        Average of column B, rows 2-8
+=A1+B1*2               Arithmetic with cell references
+=IF(A1>100, "over", "under")   Conditional logic
+=MAX(A1:A5)-MIN(A1:A5)         Range (max minus min)
+=CONCAT(A1, " - ", B1)         String concatenation
+=COUNT(A1:D1)          Count non-empty cells in a row
+```
+
+**Circular reference detection:** If cell A1 references B1, and B1 references A1, both cells display `#CIRC!`.
+
+**Programmatic evaluation:** Call `evaluateTableFormulas(tableElement)` to re-evaluate all formula cells in a specific table element without needing selection context.
+
+```js
+import { evaluateTableFormulas } from '@remyxjs/core';
+
+const table = document.querySelector('table.rmx-table');
+evaluateTableFormulas(table);
+```
+
+#### Cell formatting
+
+The `formatCell` command uses the browser's built-in `Intl` APIs for locale-aware formatting:
+
+```js
+// Number: "1,234.50"
+engine.executeCommand('formatCell', { format: 'number', options: { decimals: 2 } });
+
+// Currency: "$1,234.50" (or locale equivalent)
+engine.executeCommand('formatCell', { format: 'currency', options: { currency: 'USD' } });
+
+// Euro: "1.234,50 €"
+engine.executeCommand('formatCell', { format: 'currency', options: { currency: 'EUR' } });
+
+// Percentage: "75.0%" (raw value 0.75 × 100)
+engine.executeCommand('formatCell', { format: 'percentage', options: { decimals: 1 } });
+
+// Date: locale-formatted date
+engine.executeCommand('formatCell', { format: 'date', options: { dateStyle: 'long' } });
+```
+
+The raw value is preserved in the `data-raw-value` attribute so it can be used for sorting and formula calculations even after formatting.
+
+#### Clipboard interop
+
+When copying from a Remyx table, the clipboard contains both:
+- `text/html` — clean `<table>` markup
+- `text/plain` — TSV (tab-separated values) for pasting into spreadsheets
+
+When pasting into a table cell:
+- **TSV data** (from Excel, Sheets, or tab-separated text) is detected and inserted into the grid starting at the caret cell
+- **HTML tables** (from Excel or Sheets) are converted to TSV and inserted the same way
+- Rows and columns are automatically added if the pasted data exceeds the current table dimensions
+
+Google Sheets `<google-sheets-html-origin>` tags and Excel `mso-*` styles are automatically stripped during paste.
 
 ### Blocks
 

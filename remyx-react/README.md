@@ -145,6 +145,7 @@ const [markdown, setMarkdown] = useState('# Hello\n\nStart typing...');
 - **File uploads** — images and attachments via drag-and-drop, paste, or toolbar with pluggable upload handlers (S3, R2, GCS, custom)
 - **Fonts** — custom font lists, Google Fonts auto-loading, and helper functions
 - **Code block syntax highlighting** — 11 languages with auto-detection, theme-aware colors, and language selector dropdown
+- **Enhanced tables** — sortable columns, multi-column sort, filterable rows, inline formulas, cell formatting, column/row resize, sticky headers, and Excel/Sheets clipboard interop via `TablePlugin`
 - **Plugins** — `createPlugin()` API with hooks for commands, toolbar items, status bar items, and context menus
 - **Config file** — centralized `defineConfig()` with named editor configurations and provider-based sharing
 - **Multi-instance** — unlimited editors per page with full isolation (state, events, DOM, modals)
@@ -844,6 +845,79 @@ import { SyntaxHighlightPlugin, TablePlugin } from '@remyxjs/react';
   plugins={[SyntaxHighlightPlugin(), TablePlugin()]}
 />
 ```
+
+#### TablePlugin in depth
+
+When `TablePlugin()` is active, every `<table class="rmx-table">` in the editor automatically gains:
+
+| Feature | How it works |
+| --- | --- |
+| **Sortable columns** | Click any `<th>` to cycle through ascending → descending → unsorted. Rows are physically reordered in the DOM so the sort persists in HTML output. |
+| **Multi-column sort** | Hold **Shift** and click additional headers. A small priority number appears on each sorted header. |
+| **Sort data types** | The sort auto-detects numeric, date, or alphabetical data. Pass `dataType` explicitly or provide a custom comparator via the `tableSortComparator` engine option. |
+| **Sort indicators** | ▲/▼ triangles rendered via CSS `::after` on `<th>` elements with `data-sort-dir` attributes. |
+| **Filterable rows** | A small ▽ icon appears in each header cell. Click it to open a filter dropdown with a text input. Rows not matching the filter are hidden (non-destructive — they reappear when the filter is cleared). Multiple columns can be filtered simultaneously (AND logic). |
+| **Column/row resize** | Invisible 6px drag handles appear at column and row borders. Drag to resize. The resize is smooth (rAF-driven) and creates an undo snapshot on mouseup. |
+| **Inline formulas** | Type `=SUM(A1:A5)` in any cell. On blur, the formula is stored in a `data-formula` attribute and the computed result is displayed. On focus, the formula text is shown for editing. Supports SUM, AVERAGE, COUNT, MIN, MAX, IF, CONCAT, cell references (A1 notation), ranges, arithmetic, and comparison operators. Circular references are detected and display `#CIRC!`. |
+| **Cell formatting** | Right-click a cell to format as Number, Currency, Percentage, or Date. The raw value is preserved in `data-raw-value`; the display uses `Intl.NumberFormat` / `Intl.DateTimeFormat`. |
+| **Sticky header** | `<thead><th>` cells use `position: sticky` so the header row stays visible when scrolling tall tables. |
+| **Clipboard interop** | Copying table content produces both HTML and TSV (tab-separated values). Pasting TSV or HTML tables from Excel / Google Sheets inserts data into the grid starting at the caret cell, auto-expanding rows and columns as needed. |
+
+**Custom sort comparator:**
+
+```jsx
+<RemyxEditor
+  plugins={[TablePlugin()]}
+  engineOptions={{
+    tableSortComparator: (a, b, dataType, columnIndex) => {
+      // Custom comparison logic — return negative, zero, or positive
+      return a.localeCompare(b);
+    },
+  }}
+/>
+```
+
+**Programmatic commands (via engine ref):**
+
+```jsx
+import { useRef } from 'react';
+
+function MyEditor() {
+  const engineRef = useRef(null);
+
+  const handleSort = () => {
+    engineRef.current?.executeCommand('sortTable', {
+      keys: [
+        { columnIndex: 0, direction: 'asc' },
+        { columnIndex: 2, direction: 'desc', dataType: 'numeric' },
+      ],
+    });
+  };
+
+  const handleFilter = () => {
+    engineRef.current?.executeCommand('filterTable', {
+      columnIndex: 1,
+      filterValue: 'active',
+    });
+  };
+
+  return (
+    <>
+      <button onClick={handleSort}>Sort by Name then Score</button>
+      <button onClick={handleFilter}>Show active only</button>
+      <RemyxEditor
+        plugins={[TablePlugin()]}
+        onReady={(engine) => { engineRef.current = engine; }}
+      />
+    </>
+  );
+}
+```
+
+**Context menu additions** (appear when right-clicking inside a table):
+- Toggle Header Row
+- Format as Number / Currency / Percentage / Date
+- Clear Filters
 
 ### Custom Plugins
 

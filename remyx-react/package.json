@@ -40,6 +40,9 @@
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
+  "dependencies": {
+    "prop-types": "^15.8.1"
+  },
   "devDependencies": {
     "@remyxjs/core": "0.28.0",
     "@vitejs/plugin-react": "5.1.1",

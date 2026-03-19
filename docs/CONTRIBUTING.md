@@ -327,6 +327,24 @@ createPlugin({
 
 Only use `requiresFullAccess` for trusted, first-party plugins. Third-party plugins should work within the facade API.
 
+### Real-world example: TablePlugin
+
+The built-in `TablePlugin` is a good reference for a complex, full-access plugin. It lives in `packages/remyx-core/src/plugins/builtins/tableFeatures/` and demonstrates:
+
+- **MutationObserver** — watches for new `<table>` elements added to the editor (paste, insert)
+- **Delegated event handlers** — a single `click` listener on `engine.element` handles sort clicks on any `<th>`
+- **Focus/blur handlers** — formula cells show the formula on focus and evaluate on blur
+- **Debounced content change** — re-evaluates formulas on `content:change` with a 200ms debounce
+- **Modular sub-features** — resize handles (`resize.js`) and filter UI (`filter.js`) are separate modules
+
+```
+packages/remyx-core/src/plugins/builtins/tableFeatures/
+  TablePlugin.js   Main plugin — MutationObserver, event handlers, lifecycle
+  resize.js        Column/row resize drag handles
+  filter.js        Per-column filter dropdown UI
+  index.js         Public export
+```
+
 ### Plugin definition properties
 
 | Property | Type | Default | Description |
