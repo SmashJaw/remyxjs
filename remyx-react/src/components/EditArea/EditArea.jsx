@@ -1,4 +1,5 @@
 import { forwardRef } from 'react'
+import PropTypes from 'prop-types'
 
 export const EditArea = forwardRef(function EditArea({ style, readOnly, className = '', id }, ref) {
   return (
@@ -13,3 +14,10 @@ export const EditArea = forwardRef(function EditArea({ style, readOnly, classNam
     </div>
   )
 })
+
+EditArea.propTypes = {
+  style: PropTypes.object,
+  readOnly: PropTypes.bool,
+  className: PropTypes.string,
+  id: PropTypes.string,
+}

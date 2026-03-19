@@ -102,6 +102,7 @@ export class EditorEngine {
     this.element.removeEventListener('click', this._handleClick)
     document.removeEventListener('selectionchange', this._handleSelectionChange)
 
+    this.eventBus.emit('destroy')
     this.keyboard.destroy()
     this.history.destroy()
     this.clipboard.destroy()

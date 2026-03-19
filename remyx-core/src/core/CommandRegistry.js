@@ -51,6 +51,13 @@ export class CommandRegistry {
     if (command.shortcut) {
       this.engine.keyboard.register(command.shortcut, name)
     }
+
+    // Register alternate shortcuts as fallback bindings for cross-platform support
+    if (command.alternateShortcuts) {
+      for (const alt of command.alternateShortcuts) {
+        this.engine.keyboard.register(alt, name)
+      }
+    }
   }
 
   /**

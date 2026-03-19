@@ -8,6 +8,8 @@ export { KeyboardManager } from './core/KeyboardManager.js'
 export { Sanitizer } from './core/Sanitizer.js'
 export { Clipboard } from './core/Clipboard.js'
 export { DragDrop } from './core/DragDrop.js'
+export { EditorBus } from './core/EditorBus.js'
+export { SharedResources } from './core/SharedResources.js'
 
 // Commands (register functions)
 export { registerFormattingCommands } from './commands/formatting.js'

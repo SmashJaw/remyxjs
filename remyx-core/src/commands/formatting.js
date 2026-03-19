@@ -101,6 +101,7 @@ export function registerFormattingCommands(engine) {
     execute(eng) { toggleInlineTag(eng, 'sub') },
     isActive(eng) { return isInsideTag(eng, 'SUB') },
     shortcut: 'mod+,',
+    alternateShortcuts: ['mod+shift+,'],
     meta: { icon: 'subscript', tooltip: 'Subscript' },
   })
 
@@ -108,7 +109,55 @@ export function registerFormattingCommands(engine) {
     execute(eng) { toggleInlineTag(eng, 'sup') },
     isActive(eng) { return isInsideTag(eng, 'SUP') },
     shortcut: 'mod+.',
+    alternateShortcuts: ['mod+shift+.'],
     meta: { icon: 'superscript', tooltip: 'Superscript' },
+  })
+
+  engine.commands.register('highlight', {
+    execute(eng, { color = 'yellow' } = {}) {
+      const sel = eng.selection.getSelection()
+      if (!sel || sel.rangeCount === 0) return
+      const range = sel.getRangeAt(0)
+      if (range.collapsed) return
+
+      // Check if already inside a <mark> — toggle off
+      const parent = eng.selection.getParentElement()
+      let ancestor = parent
+      while (ancestor && ancestor !== eng.element) {
+        if (ancestor.tagName === 'MARK') {
+          const docFrag = document.createDocumentFragment()
+          while (ancestor.firstChild) {
+            docFrag.appendChild(ancestor.firstChild)
+          }
+          ancestor.parentNode.replaceChild(docFrag, ancestor)
+          return
+        }
+        ancestor = ancestor.parentNode
+      }
+
+      // Wrap in <mark> with the specified background color
+      const colorMap = {
+        yellow: 'rgba(255, 235, 59, 0.4)',
+        green: 'rgba(76, 175, 80, 0.3)',
+        blue: 'rgba(33, 150, 243, 0.3)',
+        pink: 'rgba(233, 30, 99, 0.3)',
+        orange: 'rgba(255, 152, 0, 0.3)',
+        purple: 'rgba(156, 39, 176, 0.3)',
+      }
+      const bg = colorMap[color] || colorMap.yellow
+      const mark = document.createElement('mark')
+      mark.style.backgroundColor = bg
+      mark.setAttribute('data-highlight-color', color)
+      try {
+        range.surroundContents(mark)
+      } catch {
+        const fragment = range.extractContents()
+        mark.appendChild(fragment)
+        range.insertNode(mark)
+      }
+    },
+    isActive(eng) { return isInsideTag(eng, 'MARK') },
+    meta: { icon: 'highlight', tooltip: 'Highlight' },
   })
 
   engine.commands.register('removeFormat', {
@@ -142,6 +191,7 @@ export function registerFormattingCommands(engine) {
         parent.removeChild(el)
       }
     },
+    shortcut: 'mod+\\',
     meta: { icon: 'removeFormat', tooltip: 'Remove Formatting' },
   })
 }

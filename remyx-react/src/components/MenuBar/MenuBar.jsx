@@ -158,22 +158,6 @@ function MenuBarInner({ config, engine, onOpenModal }) {
 
 export const MenuBar = React.memo(MenuBarInner)
 
-/**
- * Collect all command names from a menu bar config (recursively through submenus).
- */
-export function collectMenuBarCommands(menuBarConfig) {
-  const commands = new Set()
-  const walk = (items) => {
-    for (const item of items) {
-      if (typeof item === 'string' && item !== '---') {
-        commands.add(item)
-      } else if (typeof item === 'object' && item.items) {
-        walk(item.items)
-      }
-    }
-  }
-  for (const menu of menuBarConfig) {
-    walk(menu.items)
-  }
-  return commands
-}
+// Re-export for backward compatibility (actual implementation in separate module
+// to avoid forcing eager load of this component when only the utility is needed)
+export { collectMenuBarCommands } from './collectMenuBarCommands.js'

@@ -92,6 +92,16 @@ export function registerListCommands(engine) {
       const prevLi = li.previousElementSibling
       if (!prevLi) return // Can't indent first item
 
+      // Check current nesting depth and enforce max
+      const maxDepth = eng.options?.maxListNestingDepth ?? 5
+      let depth = 0
+      let el = li.parentElement
+      while (el && el !== eng.element) {
+        if (el.tagName === 'UL' || el.tagName === 'OL') depth++
+        el = el.parentElement
+      }
+      if (depth >= maxDepth) return // Already at max nesting depth
+
       // Find or create a sub-list inside the previous li
       const listTag = li.parentElement.tagName.toLowerCase()
       let subList = prevLi.querySelector(listTag)

@@ -225,7 +225,10 @@ export interface RemyxEditorProps {
   shortcuts?: Record<string, string>
   sanitize?: SanitizeOptions
   attachTo?: RefObject<HTMLElement>
+  baseHeadingLevel?: 1 | 2 | 3 | 4 | 5 | 6
   onReady?: (engine: EditorEngine) => void
+  onError?: (error: Error, errorInfo?: { componentStack?: string }) => void
+  errorFallback?: ReactNode
   onFocus?: () => void
   onBlur?: () => void
   className?: string
@@ -301,3 +304,74 @@ export interface RemyxConfigProviderProps {
 export declare const RemyxConfigProvider: React.FC<RemyxConfigProviderProps>
 
 export declare function useRemyxConfig(configName?: string): Partial<RemyxEditorProps>
+
+// ── Additional React Hooks ────────────────────────────────────────
+
+export interface ModalState {
+  open: boolean
+  data: unknown | null
+}
+
+export interface UseModalReturn {
+  modals: Record<string, ModalState>
+  openModal: (name: string, data?: unknown) => void
+  closeModal: (name: string) => void
+  isOpen: (name: string) => boolean
+  getData: (name: string) => unknown | null
+}
+
+export declare function useModal(): UseModalReturn
+
+export interface FormatState {
+  bold: boolean
+  italic: boolean
+  underline: boolean
+  strikethrough: boolean
+  subscript: boolean
+  superscript: boolean
+  heading: string | null
+  alignment: string
+  orderedList: boolean
+  unorderedList: boolean
+  blockquote: boolean
+  codeBlock: boolean
+  link: string | null
+  fontFamily: string | null
+  fontSize: string | null
+  foreColor: string | null
+  backColor: string | null
+}
+
+export interface UIState {
+  hasSelection: boolean
+  selectionRect: DOMRect | null
+  focusedImage: HTMLImageElement | null
+  focusedTable: HTMLTableElement | null
+  focusedCodeBlock: HTMLPreElement | null
+}
+
+export interface UseSelectionReturn {
+  formatState: FormatState
+  uiState: UIState
+}
+
+export declare function useSelection(engine: EditorEngine | null): UseSelectionReturn
+
+export interface ContextMenuState {
+  visible: boolean
+  x: number
+  y: number
+  items: unknown[]
+}
+
+export interface UseContextMenuReturn {
+  contextMenu: ContextMenuState
+  hideContextMenu: () => void
+}
+
+export declare function useContextMenu(
+  engine: EditorEngine | null,
+  editorRef: RefObject<HTMLElement>,
+): UseContextMenuReturn
+
+export declare function useSelectionContext(): FormatState | null

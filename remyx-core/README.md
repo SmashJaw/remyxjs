@@ -64,6 +64,9 @@ Use this package to build Remyx Editor integrations for any framework (Vue, Svel
   - [Toolbar Item Theming](#toolbar-item-theming)
 - [Configuration](#configuration)
   - [defineConfig](#defineconfig)
+- [Multi-Editor Support](#multi-editor-support)
+  - [EditorBus](#editorbus)
+  - [SharedResources](#sharedresources)
 - [Constants](#constants)
 - [Tree-Shaking](#tree-shaking)
 - [CSS](#css)
@@ -1479,6 +1482,98 @@ const config = defineConfig({
     },
   },
 });
+```
+
+## Multi-Editor Support
+
+When running multiple `EditorEngine` instances on a single page, two singletons help them work together efficiently.
+
+### EditorBus
+
+A process-wide pub/sub bus for inter-editor communication. Use it to sync content between linked editors (e.g., source + preview), broadcast theme changes, or coordinate save operations.
+
+```js
+import { EditorBus } from '@remyxjs/core';
+
+// Register editors so they can be looked up by ID
+EditorBus.register('source', sourceEngine);
+EditorBus.register('preview', previewEngine);
+
+// Editor A broadcasts content on every change
+sourceEngine.on('content:change', () => {
+  EditorBus.emit('sync:content', {
+    id: 'source',
+    html: sourceEngine.getHTML(),
+  });
+});
+
+// Editor B listens for updates
+EditorBus.on('sync:content', ({ id, html }) => {
+  if (id !== 'preview') {
+    previewEngine.setHTML(html);
+  }
+});
+
+// Broadcast a theme change into every editor's local event loop
+EditorBus.broadcast('theme:change', { theme: 'dark' });
+
+// Broadcast to all except the sender
+EditorBus.broadcast('sync:content', { html }, { exclude: 'source' });
+
+// Look up a registered editor
+const engine = EditorBus.getEditor('preview');
+
+// List all registered IDs
+console.log(EditorBus.getEditorIds()); // ['source', 'preview']
+
+// Unregister on destroy
+EditorBus.unregister('source');
+```
+
+| Method | Description |
+| --- | --- |
+| `register(id, engine)` | Register an engine by ID |
+| `unregister(id)` | Remove a registered engine |
+| `getEditor(id)` | Get an engine by ID |
+| `getEditorIds()` | List all registered IDs |
+| `editorCount` | Number of registered editors |
+| `on(event, handler)` | Subscribe to a global event |
+| `off(event, handler)` | Unsubscribe |
+| `once(event, handler)` | Subscribe once |
+| `emit(event, data)` | Emit to global subscribers |
+| `broadcast(event, data, opts)` | Emit into each editor's local `eventBus` |
+| `reset()` | Clear all listeners and registry (for tests) |
+
+### SharedResources
+
+A lazily-initialized singleton that provides deeply-frozen copies of large, immutable data structures (sanitizer schema, toolbar presets, defaults, keybindings, command metadata). When running 10+ editors, all instances reference the same frozen objects instead of creating independent copies.
+
+```js
+import { SharedResources } from '@remyxjs/core';
+
+// Shared, frozen sanitizer schema
+const { allowedTags, allowedStyles } = SharedResources.sanitizerSchema;
+
+// Shared toolbar presets
+const fullToolbar = SharedResources.toolbarPresets.full;
+
+// Shared defaults (toolbar, menuBar, fonts, fontSizes, colors, headingOptions)
+const defaultFonts = SharedResources.defaults.fonts;
+
+// Shared keybinding table
+const keybindings = SharedResources.keybindings;
+
+// Shared command metadata (buttons, tooltips, shortcuts, modals)
+const tooltips = SharedResources.commands.tooltips;
+
+// Register a custom icon once, available to all editors
+SharedResources.registerIcon('myAction', '<svg viewBox="0 0 24 24">...</svg>');
+SharedResources.getIcon('myAction');     // '<svg ...>'
+SharedResources.getIconNames();          // ['myAction']
+SharedResources.unregisterIcon('myAction');
+
+// Stats
+SharedResources.stats; // { registeredIcons: 0, frozenSchemas: true }
 ```
 
 ## Constants

@@ -14,6 +14,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - **Enhanced tables & spreadsheet features** — New `TablePlugin` built-in plugin providing column/row resize handles (drag-to-resize with rAF-driven smooth updates), sortable columns (click header to toggle asc/desc, Shift+click for multi-column sort with chained comparators), filterable rows (per-column filter dropdowns with debounced substring matching, non-destructive via `rmx-row-hidden` class), inline cell formulas (recursive-descent parser supporting SUM, AVERAGE, COUNT, MIN, MAX, IF, CONCAT with A1-notation cell references and circular reference detection), cell formatting (number, currency, percentage, date via `Intl.NumberFormat`/`Intl.DateTimeFormat`), sticky header rows (`position: sticky` on `<thead><th>`), and table-aware clipboard (copy as HTML + TSV, paste from Excel/Google Sheets with auto-expand). Tables now generate `<thead>` with `<th>` cells by default. Google Sheets and Excel HTML cleanup added to paste pipeline. 6 new commands: `toggleHeaderRow`, `sortTable`, `filterTable`, `clearTableFilters`, `formatCell`, `evaluateFormulas`. Sort indicators rendered via CSS `::after` pseudo-elements (▲/▼). New context menu items: Toggle Header Row, Format as Number/Currency/Percentage/Date, Clear Filters. New exports: `TablePlugin`, `evaluateTableFormulas` from `@remyxjs/core`.
 - **Code block syntax highlighting** — Language-specific syntax highlighting for `<pre><code>` blocks using custom lightweight tokenizers (zero external dependencies). Supports 11 languages: JavaScript/TypeScript, Python, CSS, SQL, JSON, Bash, Rust, Go, Java, and HTML with automatic language detection. New `SyntaxHighlightPlugin` built-in plugin with MutationObserver-based auto-highlighting, debounced to avoid disrupting contenteditable typing. Skips blocks the user is actively editing and re-highlights on blur. Theme-aware token colors via `.rmx-syn-*` CSS classes across all 6 themes. New `setCodeLanguage` and `getCodeLanguage` commands. Language selector dropdown overlay on focused code blocks in `@remyxjs/react`. Markdown round-trip preserves language identifiers (`` ```js ``, `` ```python ``). New exports: `SyntaxHighlightPlugin`, `SUPPORTED_LANGUAGES`, `LANGUAGE_MAP`, `detectLanguage`, `tokenize` from `@remyxjs/core`.
+- **EditorBus** — Process-wide singleton for inter-editor communication. Register/unregister editors by ID, pub/sub for global events, `broadcast()` to push events into every editor's local event loop, exclude option for the sender. New export: `EditorBus` from `@remyxjs/core`.
+- **SharedResources** — Lazily-initialized singleton providing deeply-frozen copies of sanitizer schema, toolbar presets, defaults, keybindings, and command metadata for memory-efficient multi-editor pages. Shared icon registry via `registerIcon()`/`getIcon()`. New export: `SharedResources` from `@remyxjs/core`.
+- **Tooltip component** — Styled tooltip (`Tooltip.jsx`) replaces native `title` attributes on toolbar buttons, showing command name + keyboard shortcut (e.g., "Bold — ⌘B") with 200ms hover delay.
+- **ContextMenu keyboard navigation** — ArrowUp/Down, Home/End, Enter to execute, Escape to close. `role="menu"` and `role="menuitem"` attributes for accessibility.
+- **FloatingToolbar keyboard navigation** — Arrow-key navigation between buttons, `:focus-visible` rings, `role="toolbar"`, focus state tracking to keep toolbar visible during interaction.
+- **Loading spinners in modals** — ImageModal, AttachmentModal, and ImportDocumentModal show spinner and disabled button during async file upload/conversion.
+- **Table delete confirmation** — `window.confirm()` before "Delete Table" in TableControls.
+- **Unsaved changes indicator** — StatusBar shows "Edited" dot when content changes and autosave is not enabled.
+- **Text highlight command** — New `highlight` command wrapping selected text in `<mark>` with 6 color options (yellow, green, blue, pink, orange, purple). Togglable.
+- **Table cell alignment** — New `alignCell` command setting `text-align` on `<td>`/`<th>` elements.
+- **Image alt-text editing** — Inline alt-text editing overlay on focused images in ImageResizeHandles.
+- **Embed modal URL preview** — Live iframe preview with 500ms debounce for YouTube/Vimeo/Dailymotion URLs in EmbedModal.
+- **Max list nesting depth** — Configurable `maxListNestingDepth` (default 5) with CSS per-level bullet styles (disc/circle/square for UL, decimal/lower-alpha/lower-roman for OL).
+- **`removeFormat` keyboard shortcut** — Added `mod+\` to the existing `removeFormat` command.
+- **Alternate shortcuts for subscript/superscript** — `mod+shift+,` and `mod+shift+.` as cross-platform fallbacks. `alternateShortcuts` support added to `CommandRegistry`.
+- **RTL support** — Automatic text direction detection, per-block `dir` attribute, CSS logical properties.
+- **i18n** — 120+ externalized strings, `t()` with interpolation, `registerLocale()`, partial locale packs with English fallback.
+- **Print stylesheet** — Clean printed output with hidden chrome, page-break control, link URLs, orphan/widow handling.
+- **Performance utilities** — DOM mutation batching, `requestIdleCallback` scheduling, rAF-throttled handlers, operation coalescing in undo/redo, benchmarking tools.
 - **Source mode sanitization notification** — `SourceModal` now emits a `source:sanitized` event when the sanitizer strips unsafe content from user-edited HTML, so consumers can surface a warning.
 - **SelectionContext** — New `SelectionContext` and `useSelectionContext()` hook in `@remyxjs/react`. Replaces prop drilling of `selectionState` through 6+ child components. Selection state is now split into `formatState` and `uiState` sub-objects for granular re-render control.
 - **Sanitizer LRU cache** — `Sanitizer.sanitize()` now caches up to 50 recent results by HTML string key, avoiding redundant DOMParser/tree-walk cycles on identical content (e.g., undo/redo).
@@ -61,6 +80,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Table cell merge optimized** — `firstCell.innerHTML += '<br>' + cell.innerHTML` per-iteration concatenation replaced with fragment collection and single join.
 - **CSS containment** — Added `contain: layout style;` to `.rmx-editor` for faster style recalculation.
 - **Vite optimizeDeps** — Root `vite.config.js` now includes `optimizeDeps.include` for `react`, `react-dom`, `marked`, `turndown`, `turndown-plugin-gfm`.
+- **TypeScript declarations updated** — Added `baseHeadingLevel`, `onError`, `errorFallback` to `RemyxEditorProps`; added `useModal`, `useSelection`, `useContextMenu`, `useSelectionContext` hook exports.
+- **PropTypes on all components** — Added PropTypes to ToolbarButton, ToolbarDropdown, ToolbarColorPicker, ToolbarSeparator, SaveStatus, RecoveryBanner, FloatingToolbar, EditArea, ModalOverlay.
+- **TableControls accessible labels** — Replaced cryptic "+Row↑", "×" with descriptive text and `aria-label` attributes.
+- **Icons Fast Refresh** — Extracted `icon()` and `filled()` helpers to `icons/helpers.jsx` for React Fast Refresh compatibility.
+- **CI pipeline expanded** — Added `npm run typecheck` and `npm run test:coverage` steps to GitHub Actions CI.
+- **Vitest coverage thresholds** — Added minimum thresholds (60% lines/functions/statements, 50% branches).
+- **Node.js engine requirement** — Added `"engines": { "node": ">=18.0.0", "npm": ">=9.0.0" }` to root package.json and `.nvmrc` with `22`.
+- **CSRF documentation** — Added CSRF protection best-practices JSDoc to CloudProvider constructor.
+- **AutosaveManager JSDoc** — Enhanced documentation on `init()`, `save()`, `checkRecovery()`, `clearRecovery()`, `destroy()`.
 
 ### Fixed
 
@@ -80,10 +108,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Export iframe double-cleanup** — PDF export now uses a shared `cleaned` guard to prevent the `onafterprint` and timeout callbacks from racing to remove the iframe.
 - **Modal error handling consistency** — `TablePickerModal` and `FindReplacePanel` now have try-catch + error state matching the pattern used by other modals.
 - **PDF export sanitizer per-call instantiation** — `exportAsPDF` now uses a module-level `Sanitizer` singleton instead of creating a new instance per call.
+- **Selection cache invalidation** — `_cacheGeneration` counter now correctly invalidates cached range via microtask comparison.
+- **Slash commands destroy cleanup** — Replaced monkey-patched `engine.destroy` with `engine.eventBus.on('destroy', cleanup)` pattern; EditorEngine now emits `destroy` event.
+- **Cut handler history snapshot** — `_handleCut()` now calls `history.snapshot()` before the async `setTimeout` to capture correct undo state.
+- **usePortalAttachment HTML preservation** — Restores `innerHTML` instead of `textContent` when cleaning up non-form-element portals.
+- **useSlashCommands cascading renders** — Moved `setSelectedIndex(0)` from separate `useEffect` into `slash:query` event handler.
+- **vitest.config.js ESM compatibility** — Replaced `__dirname` with `fileURLToPath(import.meta.url)` polyfill.
+- **React version alignment** — Updated `remyx-react` devDeps to `^19.2.0` to match root package.json.
+- **CloudProvider buildUrl validation** — Callback-returned URLs now validated for http/https protocol via `validateUrl()` helper.
+- **Pasted @font-face stripping** — `cleanPastedHTML()` now removes `@font-face` declarations that could contain tracking URLs.
+- **WordCountPlugin listener leak** — `content:change` listener now properly unsubscribed in `destroy()`.
+- **Duplicate _exceedsMaxFileSize** — Extracted to shared `utils/fileValidation.js` utility used by both Clipboard and DragDrop.
+- **Format detection via DOM traversal** — `getActiveFormats()` uses pre-compiled `FORMAT_TAG_MAP` with Set lookups instead of deprecated `queryCommandState`.
+- **Tokenizer keyword matching** — Replaced regex alternation with Set-based `keywordMatcher()` lookups for JS, Python, SQL, Rust, Java.
+- **DOMParser reuse** — Hoisted to module scope in `pasteClean.js` for reuse across calls.
+- **MenuBar duplicate import** — Extracted `collectMenuBarCommands` to standalone module, eliminating static+dynamic import conflict.
 
 ### Security
 
 - **Pinned runtime dependencies** — `marked`, `turndown`, and `turndown-plugin-gfm` in `@remyxjs/core` are now pinned to exact versions (no `^` ranges) to prevent unvetted patch updates.
+- **CSRF documentation** — CloudProvider constructor JSDoc now includes CSRF token best practices for session-based authentication.
 
 ---
 

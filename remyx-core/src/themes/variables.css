@@ -2153,6 +2153,100 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
+/* ====== Tooltip ====== */
+.rmx-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.rmx-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  background: var(--rmx-text, #1e293b);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: var(--rmx-radius-inner, 4px);
+  box-shadow: var(--rmx-shadow-sm);
+  z-index: 10001;
+  pointer-events: none;
+  animation: rmx-tooltip-in 0.12s ease;
+  line-height: 1.4;
+}
+
+.rmx-tooltip-arrow {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 4px;
+  overflow: hidden;
+}
+
+.rmx-tooltip-arrow::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 0 auto;
+  background: var(--rmx-text, #1e293b);
+  transform: rotate(45deg);
+  transform-origin: center center;
+}
+
+@keyframes rmx-tooltip-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(2px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ====== Spinner ====== */
+.rmx-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--rmx-border, #e2e8f0);
+  border-top-color: var(--rmx-primary, #6366f1);
+  border-radius: 50%;
+  animation: rmx-spin 0.6s linear infinite;
+}
+
+@keyframes rmx-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ====== Focus Indicators ====== */
+.rmx-floating-toolbar .rmx-toolbar-btn:focus-visible,
+.rmx-context-menu-item:focus-visible {
+  outline: 2px solid var(--rmx-focus-ring, #6366f1);
+  outline-offset: -2px;
+  border-radius: var(--rmx-radius-inner, 4px);
+}
+
+.rmx-context-menu-item.rmx-focused {
+  background: var(--rmx-toolbar-button-hover);
+}
+
+/* ====== Unsaved Changes Indicator ====== */
+.rmx-statusbar-dirty {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--rmx-primary, #6366f1);
+  font-weight: 600;
+}
+
+.rmx-statusbar-dirty-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rmx-primary, #6366f1);
+}
+
 /* ====== Print Stylesheet ====== */
 @media print {
   /* Hide all chrome — only print content */
@@ -2270,4 +2364,79 @@
 .rmx-content [dir="rtl"] .rmx-task-checkbox {
   margin-left: 8px;
   margin-right: 0;
+}
+
+/* ====== List Nesting Visual Hierarchy ====== */
+.rmx-content ul { list-style-type: disc; }
+.rmx-content ul ul { list-style-type: circle; }
+.rmx-content ul ul ul { list-style-type: square; }
+.rmx-content ul ul ul ul { list-style-type: disc; }
+.rmx-content ul ul ul ul ul { list-style-type: circle; }
+
+.rmx-content ol { list-style-type: decimal; }
+.rmx-content ol ol { list-style-type: lower-alpha; }
+.rmx-content ol ol ol { list-style-type: lower-roman; }
+.rmx-content ol ol ol ol { list-style-type: decimal; }
+.rmx-content ol ol ol ol ol { list-style-type: lower-alpha; }
+
+/* ====== Image Alt-Text Edit Overlay ====== */
+.rmx-image-alt-overlay {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+}
+
+.rmx-image-alt-input {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid var(--rmx-border);
+  border-radius: var(--rmx-radius-inner);
+  background: var(--rmx-modal-bg);
+  color: var(--rmx-text);
+  min-width: 120px;
+  max-width: 250px;
+  box-shadow: var(--rmx-shadow-sm);
+}
+
+.rmx-image-alt-input:focus {
+  outline: none;
+  border-color: var(--rmx-primary);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.rmx-image-alt-label {
+  font-size: 11px;
+  color: var(--rmx-text-secondary);
+  background: var(--rmx-modal-bg);
+  padding: 2px 6px;
+  border-radius: var(--rmx-radius-inner);
+  border: 1px solid var(--rmx-border);
+  box-shadow: var(--rmx-shadow-sm);
+  white-space: nowrap;
+}
+
+/* ====== Embed Preview ====== */
+.rmx-embed-preview {
+  margin-top: 12px;
+  border: 1px solid var(--rmx-border);
+  border-radius: var(--rmx-radius);
+  overflow: hidden;
+  background: var(--rmx-bg);
+}
+
+.rmx-embed-preview iframe {
+  width: 100%;
+  height: 200px;
+  border: none;
+}
+
+.rmx-embed-preview-placeholder {
+  padding: 24px;
+  text-align: center;
+  color: var(--rmx-text-secondary);
+  font-size: 13px;
 }

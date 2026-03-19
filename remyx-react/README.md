@@ -148,7 +148,7 @@ const [markdown, setMarkdown] = useState('# Hello\n\nStart typing...');
 - **Enhanced tables** — sortable columns, multi-column sort, filterable rows, inline formulas, cell formatting, column/row resize, sticky headers, and Excel/Sheets clipboard interop via `TablePlugin`
 - **Plugins** — `createPlugin()` API with hooks for commands, toolbar items, status bar items, and context menus
 - **Config file** — centralized `defineConfig()` with named editor configurations and provider-based sharing
-- **Multi-instance** — unlimited editors per page with full isolation (state, events, DOM, modals)
+- **Multi-instance** — unlimited editors per page with full isolation (state, events, DOM, modals), `EditorBus` for inter-editor communication, `SharedResources` for memory-efficient shared schemas and icons
 - **Import/Export** — PDF, DOCX, Markdown, CSV, and HTML
 - **Paste cleaning** — intelligent cleanup from Word, Google Docs, LibreOffice, Pages, and raw markdown
 - **Command palette** — searchable overlay with all editor commands, opened via `Mod+Shift+P` or toolbar button

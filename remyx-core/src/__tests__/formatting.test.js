@@ -47,14 +47,15 @@ describe('registerFormattingCommands', () => {
     document.body.innerHTML = ''
   })
 
-  it('should register all 7 formatting commands', () => {
-    expect(mockEngine.commands.register).toHaveBeenCalledTimes(7)
+  it('should register all 8 formatting commands', () => {
+    expect(mockEngine.commands.register).toHaveBeenCalledTimes(8)
     expect(commands.bold).toBeDefined()
     expect(commands.italic).toBeDefined()
     expect(commands.underline).toBeDefined()
     expect(commands.strikethrough).toBeDefined()
     expect(commands.subscript).toBeDefined()
     expect(commands.superscript).toBeDefined()
+    expect(commands.highlight).toBeDefined()
     expect(commands.removeFormat).toBeDefined()
   })
 

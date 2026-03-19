@@ -7,6 +7,19 @@
 
 const ENVELOPE_VERSION = 1
 
+/** Validates that a URL from a callback uses http or https protocol */
+function validateUrl(url) {
+  try {
+    const parsed = new URL(url)
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      throw new Error('URL must use http or https protocol')
+    }
+    return url
+  } catch (err) {
+    throw new Error(`Invalid URL from callback: ${err.message}`)
+  }
+}
+
 /** Wraps content in a versioned JSON envelope with timestamp */
 function createEnvelope(content, metadata = {}) {
   return JSON.stringify({
@@ -171,6 +184,20 @@ export class CloudProvider {
    * @param {(key: string, content: string) => string|FormData} [opts.buildBody] - Custom body builder
    * @param {(key: string) => string} [opts.buildLoadUrl] - Custom URL for load/GET requests
    * @param {(key: string) => string} [opts.buildDeleteUrl] - Custom URL for delete requests
+   *
+   * **CSRF Protection:** When using cloud autosave with session-based authentication,
+   * include a CSRF token in the `headers` option. For example:
+   * ```js
+   * new CloudProvider({
+   *   endpoint: 'https://api.example.com/autosave',
+   *   headers: {
+   *     'X-CSRF-Token': getCsrfToken(),
+   *     'Authorization': 'Bearer ...',
+   *   },
+   * })
+   * ```
+   * For token-based auth (Bearer tokens), CSRF protection is typically not needed
+   * since the token itself proves the request origin.
    */
   constructor({
     endpoint,
@@ -207,17 +234,17 @@ export class CloudProvider {
   }
 
   _saveUrl(key) {
-    return this.buildUrl ? this.buildUrl(key) : this.endpoint
+    return this.buildUrl ? validateUrl(this.buildUrl(key)) : this.endpoint
   }
 
   _loadUrl(key) {
-    if (this.buildLoadUrl) return this.buildLoadUrl(key)
+    if (this.buildLoadUrl) return validateUrl(this.buildLoadUrl(key))
     const sep = this.endpoint.includes('?') ? '&' : '?'
     return `${this.endpoint}${sep}key=${encodeURIComponent(key)}`
   }
 
   _deleteUrl(key) {
-    return this.buildDeleteUrl ? this.buildDeleteUrl(key) : this._loadUrl(key)
+    return this.buildDeleteUrl ? validateUrl(this.buildDeleteUrl(key)) : this._loadUrl(key)
   }
 
   async _fetchWithRetry(url, opts, retries = 1) {

@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { ToolbarButton } from '../Toolbar/ToolbarButton.jsx'
 import { useSelectionContext } from '../../config/SelectionContext.js'
 
@@ -15,6 +16,7 @@ function FloatingToolbarInner({ visible, selectionRect, engine, editorRect, onOp
   const ref = useRef(null)
   const sizeRef = useRef({ width: 0, height: 0 })
   const [position, setPosition] = useState({ top: 0, left: 0 })
+  const [hasFocus, setHasFocus] = useState(false)
 
   // Cache toolbar dimensions via ResizeObserver to avoid forced reflows
   useEffect(() => {
@@ -46,16 +48,56 @@ function FloatingToolbarInner({ visible, selectionRect, engine, editorRect, onOp
     setPosition({ top, left })
   }, [visible, selectionRect, editorRect])
 
-  if (!visible || !engine) return null
+  // Arrow-key navigation between toolbar buttons
+  const handleKeyDown = useCallback((e) => {
+    const toolbar = ref.current
+    if (!toolbar) return
+
+    const buttons = Array.from(toolbar.querySelectorAll('button:not([disabled])'))
+    const currentIndex = buttons.indexOf(document.activeElement)
+
+    let nextIndex = -1
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      nextIndex = currentIndex < buttons.length - 1 ? currentIndex + 1 : 0
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      nextIndex = currentIndex > 0 ? currentIndex - 1 : buttons.length - 1
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      nextIndex = 0
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      nextIndex = buttons.length - 1
+    }
+
+    if (nextIndex >= 0 && buttons[nextIndex]) {
+      buttons[nextIndex].focus()
+    }
+  }, [])
+
+  // Keep toolbar visible while any button inside has focus
+  const handleFocusIn = useCallback(() => setHasFocus(true), [])
+  const handleFocusOut = useCallback(() => setHasFocus(false), [])
+
+  // Prevent editor from losing focus/selection on mousedown (task 222)
+  const handleMouseDown = useCallback((e) => e.preventDefault(), [])
+
+  if ((!visible && !hasFocus) || !engine) return null
 
   return (
     <div
       ref={ref}
       className="rmx-floating-toolbar"
       style={{ top: position.top, left: position.left }}
-      onMouseDown={(e) => e.preventDefault()}
+      role="toolbar"
+      aria-label="Formatting toolbar"
+      onMouseDown={handleMouseDown}
+      onKeyDown={handleKeyDown}
+      onFocus={handleFocusIn}
+      onBlur={handleFocusOut}
     >
-      {FLOATING_COMMANDS.map((cmd) => {
+      {FLOATING_COMMANDS.map((cmd, i) => {
         if (cmd === 'link') {
           return (
             <ToolbarButton
@@ -83,3 +125,11 @@ function FloatingToolbarInner({ visible, selectionRect, engine, editorRect, onOp
 }
 
 export const FloatingToolbar = React.memo(FloatingToolbarInner)
+
+FloatingToolbar.propTypes = {
+  visible: PropTypes.bool.isRequired,
+  selectionRect: PropTypes.object,
+  engine: PropTypes.object,
+  editorRect: PropTypes.object,
+  onOpenModal: PropTypes.func,
+}

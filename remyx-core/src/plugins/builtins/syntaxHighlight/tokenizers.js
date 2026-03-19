@@ -59,6 +59,61 @@ function kwi(words) {
   return new RegExp(`\\b(?:${words.join('|')})\\b`, 'gi');
 }
 
+/**
+ * Set-based keyword matcher for large keyword lists (50+ words).
+ * More efficient than regex alternation for large word sets.
+ * @param {string[]} keywords - Array of keywords
+ * @returns {(word: string) => boolean}
+ */
+function keywordMatcher(keywords) {
+  const set = new Set(keywords)
+  return (word) => set.has(word)
+}
+
+/** Case-insensitive Set-based keyword matcher. */
+function keywordMatcherI(keywords) {
+  const set = new Set(keywords.map(w => w.toLowerCase()))
+  return (word) => set.has(word.toLowerCase())
+}
+
+/**
+ * Post-process tokens from runRules: split plain-text tokens on word boundaries
+ * and classify words using Set-based matchers. Each entry in `matchers` is
+ * { match: (word) => boolean, className: string }.
+ */
+function applyKeywordSets(tokens, matchers) {
+  const result = []
+  const WORD_RE = /\b[a-zA-Z_$]\w*\b/g
+  for (const tok of tokens) {
+    if (tok.className !== null) {
+      result.push(tok)
+      continue
+    }
+    // Split plain text on word boundaries and check against matchers
+    let lastIndex = 0
+    let m
+    WORD_RE.lastIndex = 0
+    while ((m = WORD_RE.exec(tok.text)) !== null) {
+      if (m.index > lastIndex) {
+        result.push({ text: tok.text.slice(lastIndex, m.index), className: null })
+      }
+      let cls = null
+      for (const { match, className } of matchers) {
+        if (match(m[0])) {
+          cls = className
+          break
+        }
+      }
+      result.push({ text: m[0], className: cls })
+      lastIndex = WORD_RE.lastIndex
+    }
+    if (lastIndex < tok.text.length) {
+      result.push({ text: tok.text.slice(lastIndex), className: null })
+    }
+  }
+  return result
+}
+
 // ---------------------------------------------------------------------------
 // JavaScript / TypeScript
 // ---------------------------------------------------------------------------
@@ -84,6 +139,16 @@ const JS_TYPES = [
   'type', 'keyof', 'readonly', 'infer',
 ];
 
+// Set-based matchers for JS (73 combined keywords — avoids large regex alternation)
+const _jsTypeMatch = keywordMatcher(JS_TYPES);
+const _jsKeywordMatch = keywordMatcher(JS_KEYWORDS);
+const _jsBuiltinMatch = keywordMatcher(JS_BUILTINS);
+const _jsMatchers = [
+  { match: _jsTypeMatch, className: 'rmx-syn-type' },
+  { match: _jsKeywordMatch, className: 'rmx-syn-keyword' },
+  { match: _jsBuiltinMatch, className: 'rmx-syn-builtin' },
+];
+
 const JS_RULES = [
   [/\/\/[^\n]{0,500}/g, 'rmx-syn-comment'],
   [/\/\*[^]*?(?:\*\/|$)/g, 'rmx-syn-comment'],
@@ -92,9 +157,6 @@ const JS_RULES = [
   [/"(?:[^"\\]|\\.){0,1000}"/g, 'rmx-syn-string'],
   [/'(?:[^'\\]|\\.){0,1000}'/g, 'rmx-syn-string'],
   [/@\w{1,50}/g, 'rmx-syn-decorator'],
-  [kw(JS_TYPES), 'rmx-syn-type'],
-  [kw(JS_KEYWORDS), 'rmx-syn-keyword'],
-  [kw(JS_BUILTINS), 'rmx-syn-builtin'],
   [/\b\d[\d_]{0,30}(?:\.\d[\d_]{0,30})?(?:[eE][+-]?\d{1,10})?\b/g, 'rmx-syn-number'],
   [/0[xX][\da-fA-F_]{1,20}/g, 'rmx-syn-number'],
   [/0[bB][01_]{1,64}/g, 'rmx-syn-number'],
@@ -105,7 +167,7 @@ const JS_RULES = [
 ];
 
 export function tokenizeJavaScript(code) {
-  return runRules(code, JS_RULES);
+  return applyKeywordSets(runRules(code, JS_RULES), _jsMatchers);
 }
 
 // ---------------------------------------------------------------------------
@@ -131,6 +193,14 @@ const PY_BUILTINS = [
   'tuple', 'type', 'vars', 'zip',
 ];
 
+// Set-based matchers for Python (78 combined keywords)
+const _pyKeywordMatch = keywordMatcher(PY_KEYWORDS);
+const _pyBuiltinMatch = keywordMatcher(PY_BUILTINS);
+const _pyMatchers = [
+  { match: _pyKeywordMatch, className: 'rmx-syn-keyword' },
+  { match: _pyBuiltinMatch, className: 'rmx-syn-builtin' },
+];
+
 const PY_RULES = [
   [/#[^\n]{0,500}/g, 'rmx-syn-comment'],
   [/"""[^]*?(?:"""|$)/g, 'rmx-syn-string'],
@@ -140,8 +210,6 @@ const PY_RULES = [
   [/"(?:[^"\\]|\\.){0,1000}"/g, 'rmx-syn-string'],
   [/'(?:[^'\\]|\\.){0,1000}'/g, 'rmx-syn-string'],
   [/@\w{1,50}/g, 'rmx-syn-decorator'],
-  [kw(PY_KEYWORDS), 'rmx-syn-keyword'],
-  [kw(PY_BUILTINS), 'rmx-syn-builtin'],
   [/\b\d[\d_]{0,30}(?:\.\d[\d_]{0,30})?(?:[eE][+-]?\d{1,10})?\b/g, 'rmx-syn-number'],
   [/0[xX][\da-fA-F_]{1,20}/g, 'rmx-syn-number'],
   [/0[bBoO][\d_]{1,64}/g, 'rmx-syn-number'],
@@ -152,7 +220,7 @@ const PY_RULES = [
 ];
 
 export function tokenizePython(code) {
-  return runRules(code, PY_RULES);
+  return applyKeywordSets(runRules(code, PY_RULES), _pyMatchers);
 }
 
 // ---------------------------------------------------------------------------
@@ -212,22 +280,28 @@ const SQL_BUILTINS = [
   'LOWER', 'LENGTH', 'CONCAT', 'NOW', 'CURRENT_TIMESTAMP',
 ];
 
+// Set-based matchers for SQL (92 combined keywords, case-insensitive)
+const _sqlTypeMatch = keywordMatcherI(SQL_TYPES);
+const _sqlKeywordMatch = keywordMatcherI(SQL_KEYWORDS);
+const _sqlBuiltinMatch = keywordMatcherI([...SQL_BUILTINS, 'TRUE', 'FALSE']);
+const _sqlMatchers = [
+  { match: _sqlTypeMatch, className: 'rmx-syn-type' },
+  { match: _sqlKeywordMatch, className: 'rmx-syn-keyword' },
+  { match: _sqlBuiltinMatch, className: 'rmx-syn-builtin' },
+];
+
 const SQL_RULES = [
   [/--[^\n]{0,500}/g, 'rmx-syn-comment'],
   [/\/\*[^]*?(?:\*\/|$)/g, 'rmx-syn-comment'],
   [/'(?:[^'\\]|\\.){0,1000}'/g, 'rmx-syn-string'],
   [/"(?:[^"\\]|\\.){0,1000}"/g, 'rmx-syn-string'],
-  [kwi(SQL_TYPES), 'rmx-syn-type'],
-  [kwi(SQL_KEYWORDS), 'rmx-syn-keyword'],
-  [kwi(SQL_BUILTINS), 'rmx-syn-builtin'],
-  [/\b(?:TRUE|FALSE)\b/gi, 'rmx-syn-builtin'],
   [/\b\d[\d.]{0,20}\b/g, 'rmx-syn-number'],
   [/[+\-*/%=!<>]{1,3}/g, 'rmx-syn-operator'],
   [/[{}()[\];,.]/g, 'rmx-syn-punctuation'],
 ];
 
 export function tokenizeSQL(code) {
-  return runRules(code, SQL_RULES);
+  return applyKeywordSets(runRules(code, SQL_RULES), _sqlMatchers);
 }
 
 // ---------------------------------------------------------------------------
@@ -308,6 +382,16 @@ const RUST_BUILTINS = [
   'unimplemented', 'unreachable', 'dbg', 'cfg', 'derive',
 ];
 
+// Set-based matchers for Rust (72 combined keywords)
+const _rustTypeMatch = keywordMatcher(RUST_TYPES);
+const _rustKeywordMatch = keywordMatcher(RUST_KEYWORDS);
+const _rustBuiltinMatch = keywordMatcher(RUST_BUILTINS);
+const _rustMatchers = [
+  { match: _rustTypeMatch, className: 'rmx-syn-type' },
+  { match: _rustKeywordMatch, className: 'rmx-syn-keyword' },
+  { match: _rustBuiltinMatch, className: 'rmx-syn-builtin' },
+];
+
 const RUST_RULES = [
   [/\/\/[^\n]{0,500}/g, 'rmx-syn-comment'],
   [/\/\*[^]*?(?:\*\/|$)/g, 'rmx-syn-comment'],
@@ -318,9 +402,6 @@ const RUST_RULES = [
   [/#!\[[\w:]{1,50}/g, 'rmx-syn-decorator'],
   [/#\[[\w:]{1,50}/g, 'rmx-syn-decorator'],
   [/\b\w{1,30}!/g, 'rmx-syn-builtin'],
-  [kw(RUST_TYPES), 'rmx-syn-type'],
-  [kw(RUST_KEYWORDS), 'rmx-syn-keyword'],
-  [kw(RUST_BUILTINS), 'rmx-syn-builtin'],
   [/\b\d[\d_]{0,30}(?:\.\d[\d_]{0,30})?(?:[eE][+-]?\d{1,10})?(?:_?(?:f32|f64|i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|isize|usize))?\b/g, 'rmx-syn-number'],
   [/0[xX][\da-fA-F_]{1,20}/g, 'rmx-syn-number'],
   [/0[bB][01_]{1,64}/g, 'rmx-syn-number'],
@@ -331,7 +412,7 @@ const RUST_RULES = [
 ];
 
 export function tokenizeRust(code) {
-  return runRules(code, RUST_RULES);
+  return applyKeywordSets(runRules(code, RUST_RULES), _rustMatchers);
 }
 
 // ---------------------------------------------------------------------------
@@ -403,15 +484,22 @@ const JAVA_BUILTINS = [
   'true', 'false', 'null', 'System', 'Math', 'Arrays', 'Collections',
 ];
 
+// Set-based matchers for Java (71 combined keywords)
+const _javaTypeMatch = keywordMatcher(JAVA_TYPES);
+const _javaKeywordMatch = keywordMatcher(JAVA_KEYWORDS);
+const _javaBuiltinMatch = keywordMatcher(JAVA_BUILTINS);
+const _javaMatchers = [
+  { match: _javaTypeMatch, className: 'rmx-syn-type' },
+  { match: _javaKeywordMatch, className: 'rmx-syn-keyword' },
+  { match: _javaBuiltinMatch, className: 'rmx-syn-builtin' },
+];
+
 const JAVA_RULES = [
   [/\/\/[^\n]{0,500}/g, 'rmx-syn-comment'],
   [/\/\*[^]*?(?:\*\/|$)/g, 'rmx-syn-comment'],
   [/"(?:[^"\\]|\\.){0,1000}"/g, 'rmx-syn-string'],
   [/'(?:[^'\\]|\\.){1,4}'/g, 'rmx-syn-string'],
   [/@\w{1,50}/g, 'rmx-syn-decorator'],
-  [kw(JAVA_TYPES), 'rmx-syn-type'],
-  [kw(JAVA_KEYWORDS), 'rmx-syn-keyword'],
-  [kw(JAVA_BUILTINS), 'rmx-syn-builtin'],
   [/\b\d[\d_]{0,30}(?:\.\d[\d_]{0,30})?(?:[eE][+-]?\d{1,10})?[lLfFdD]?\b/g, 'rmx-syn-number'],
   [/0[xX][\da-fA-F_]{1,20}[lL]?/g, 'rmx-syn-number'],
   [/0[bB][01_]{1,64}[lL]?/g, 'rmx-syn-number'],
@@ -422,7 +510,7 @@ const JAVA_RULES = [
 ];
 
 export function tokenizeJava(code) {
-  return runRules(code, JAVA_RULES);
+  return applyKeywordSets(runRules(code, JAVA_RULES), _javaMatchers);
 }
 
 // ---------------------------------------------------------------------------

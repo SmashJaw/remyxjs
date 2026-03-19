@@ -4,8 +4,9 @@
 
 **Last updated:** 2026-03-19
 **Version:** 0.28.0 (unreleased)
+**Status:** ✅ All 235 tasks resolved — 0 open
 
-A single reference for every bug, security fix, cleanup item, and optimization across the Remyx Editor monorepo. Say **"do task 42"** or **"do Sanitizer LRU Cache"** and it gets done.
+A single reference for every bug, security fix, cleanup item, optimization, UX improvement, feature request, and code efficiency task across the Remyx Editor monorepo.
 
 Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 
@@ -53,7 +54,7 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 | 171 | FindReplace `<mark>` references go stale after external DOM mutations | Low | ✅ | core | `findReplace.js` |
 | 172 | Export iframe double-cleanup race between timeout and `onafterprint` | Low | ✅ | core | `exportUtils.js` |
 
-**28 resolved, 0 open.**
+**35 resolved, 0 open.**
 
 ---
 
@@ -104,7 +105,7 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 | 177 | Export PDF iframe missing `sandbox` attribute | Low | ✅ | core | `exportUtils.js` |
 | 178 | Markdown converter URL validation uses regex instead of URL constructor | Low | ✅ | core | `markdownConverter.js` |
 
-**42 resolved, 0 open.**
+**45 resolved, 0 open.**
 
 ---
 
@@ -170,7 +171,7 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 | 182 | BlockDragHandle accesses private engine property `_dragSource` | Low | ✅ | react | Added `isDragging()` public method to DragDrop |
 | 186 | Migrate test framework from Jest to Vitest | High | ✅ | all | Migrated 52 test files, `vitest.config.js`, removed Jest deps |
 
-**57 resolved, 0 open.**
+**71 resolved, 0 open.**
 
 ---
 
@@ -238,7 +239,7 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 | 184 | FindReplace `unshift()` causes O(n²) match array construction | Low | ✅ | core | `push()` + `reverse()` at end |
 | 185 | Table cell merge concatenates `innerHTML` per iteration | Low | ✅ | core | Collect fragments first, join once |
 
-**59 resolved, 0 open.**
+**63 resolved, 0 open.**
 
 ---
 
@@ -248,49 +249,49 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 
 | # | Title | Priority | Status | Package | File(s) |
 |---|-------|----------|--------|---------|---------|
-| 187 | Selection cache invalidation compares same variable | High | 🔲 | core | `Selection.js` L89 — `this._cacheGeneration === this._cacheGeneration` is always true; cache never actually invalidates via microtask |
-| 188 | Slash commands `destroy` monkey-patches engine | High | 🔲 | core | `slashCommands.js` L185–190 — monkey-patched `destroy()` can be lost or called twice |
-| 189 | Cut handler missing history snapshot before async | Medium | 🔲 | core | `Clipboard.js` L129–134 — emits `content:change` via `setTimeout` without snapshotting first; undo may capture wrong state |
-| 190 | `usePortalAttachment` restores `textContent` instead of `innerHTML` | Medium | 🔲 | react | `usePortalAttachment.js` L43–48 — loses HTML structure when restoring div content |
-| 191 | `useSlashCommands` calls `setState` synchronously in `useEffect` | High | 🔲 | react | `useSlashCommands.js` L31 — `setSelectedIndex(0)` in effect body causes cascading renders |
-| 192 | `vitest.config.js` uses `__dirname` which is undefined in ESM | Medium | 🔲 | root | `vitest.config.js` L10–11 — needs `import.meta.dirname` or `fileURLToPath` polyfill |
-| 193 | React version mismatch across monorepo (19.2.0 vs 19.2.4) | Medium | 🔲 | root | Root `package.json` has `^19.2.0` but lock resolves to 19.2.4; remyx-react devDeps pin 19.2.0 |
+| 187 | Selection cache invalidation compares same variable | High | ✅ | core | Fixed: increment `_cacheGeneration` counter and capture in local `gen` for microtask comparison |
+| 188 | Slash commands `destroy` monkey-patches engine | High | ✅ | core | Fixed: replaced monkey-patch with `engine.eventBus.on('destroy', cleanup)`; added `destroy` event emission in EditorEngine |
+| 189 | Cut handler missing history snapshot before async | Medium | ✅ | core | Fixed: added `this.engine.history.snapshot()` before setTimeout in `_handleCut()` |
+| 190 | `usePortalAttachment` restores `textContent` instead of `innerHTML` | Medium | ✅ | react | Fixed: changed to `innerHTML` for both save and restore of original div content |
+| 191 | `useSlashCommands` calls `setState` synchronously in `useEffect` | High | ✅ | react | Fixed: removed separate useEffect, moved `setSelectedIndex(0)` into `slash:query` event handler |
+| 192 | `vitest.config.js` uses `__dirname` which is undefined in ESM | Medium | ✅ | root | Fixed: added `fileURLToPath(import.meta.url)` polyfill |
+| 193 | React version mismatch across monorepo (19.2.0 vs 19.2.4) | Medium | ✅ | root | Fixed: updated remyx-react devDeps to `^19.2.0` to match root |
 
 ### Security
 
 | # | Title | Priority | Status | Package | File(s) |
 |---|-------|----------|--------|---------|---------|
-| 194 | CloudProvider `buildUrl` callback not validated | High | 🔲 | core | `providers.js` L186–196 — custom `buildUrl`/`buildLoadUrl`/`buildDeleteUrl` return values unchecked for dangerous protocols |
-| 195 | Pasted font-face URLs preserved without validation | Medium | 🔲 | core | `pasteClean.js` L122 — font URLs in pasted HTML could point to malicious resources |
-| 196 | Missing CSRF documentation for CloudProvider | Low | 🔲 | core | `providers.js` — no guidance on CSRF token usage for cloud autosave endpoints |
+| 194 | CloudProvider `buildUrl` callback not validated | High | ✅ | core | Fixed: added `validateUrl()` helper; all callback URLs validated for http/https protocol |
+| 195 | Pasted font-face URLs preserved without validation | Medium | ✅ | core | Fixed: added `@font-face` declaration stripping in `cleanPastedHTML()` |
+| 196 | Missing CSRF documentation for CloudProvider | Low | ✅ Documented | core | Added CSRF protection best-practices JSDoc to CloudProvider constructor |
 
 ### Cleanup
 
 | # | Title | Priority | Status | Package | File(s) |
 |---|-------|----------|--------|---------|---------|
-| 197 | `WordCountPlugin` never unsubscribes from EventBus | Medium | 🔲 | core | `WordCountPlugin.js` L27 — `content:change` listener leaks after destroy |
-| 198 | Duplicate `_exceedsMaxFileSize` in Clipboard and DragDrop | Low | 🔲 | core | `Clipboard.js` L141–150, `DragDrop.js` L583–593 — extract to shared utility |
-| 199 | Missing PropTypes on Toolbar sub-components | Low | 🔲 | react | `ToolbarButton.jsx`, `ToolbarDropdown.jsx`, `ToolbarColorPicker.jsx`, `ToolbarSeparator.jsx` |
-| 200 | Missing PropTypes on SaveStatus, RecoveryBanner, FloatingToolbar, EditArea, ModalOverlay | Low | 🔲 | react | Multiple component files |
-| 201 | TypeScript declarations missing new props (`baseHeadingLevel`, `onError`, `errorFallback`, `menuBar`) | Medium | 🔲 | react | `types/index.d.ts` — `RemyxEditorProps` incomplete |
-| 202 | TypeScript declarations missing hook exports (`useModal`, `useSelection`, `useContextMenu`, `useSelectionContext`) | Medium | 🔲 | react | `types/index.d.ts` |
-| 203 | Missing `engines` field in root `package.json` | Medium | 🔲 | root | No minimum Node/npm version enforced |
-| 204 | Missing `.nvmrc` for Node version pinning | Low | 🔲 | root | Developers may use inconsistent Node versions |
-| 205 | Icons file exports non-components, breaking React Fast Refresh | Medium | 🔲 | react | `icons/index.jsx` L347 — `icon()` and `filled()` helpers should be in separate file |
-| 206 | CI pipeline missing typecheck and coverage steps | Medium | 🔲 | root | `.github/workflows/ci.yml` — only runs lint, build, test |
-| 207 | Missing `rollup-plugin-visualizer` in devDependencies | Low | 🔲 | core/react | Both vite configs dynamically import it but it's not declared |
-| 208 | Ghost preview comment misleading in DragDrop | Info | 🔲 | core | `DragDrop.js` L510 — comment says "keep ghost" but cleanup happens in `_cleanupDrag` |
-| 209 | Missing JSDoc on public AutosaveManager methods | Low | 🔲 | core | `AutosaveManager.js` — `init()`, `save()`, `checkRecovery()`, `clearRecovery()` |
-| 210 | Vitest coverage thresholds not configured | Low | 🔲 | root | `vitest.config.js` — no minimum coverage enforcement |
+| 197 | `WordCountPlugin` never unsubscribes from EventBus | Medium | ✅ | core | Fixed: stored unsubscribe function, called in `destroy()` |
+| 198 | Duplicate `_exceedsMaxFileSize` in Clipboard and DragDrop | Low | ✅ | core | Fixed: extracted to `utils/fileValidation.js` shared utility |
+| 199 | Missing PropTypes on Toolbar sub-components | Low | ✅ | react | Added PropTypes to ToolbarButton, ToolbarDropdown, ToolbarColorPicker, ToolbarSeparator |
+| 200 | Missing PropTypes on SaveStatus, RecoveryBanner, FloatingToolbar, EditArea, ModalOverlay | Low | ✅ | react | Added PropTypes to all 5 components |
+| 201 | TypeScript declarations missing new props (`baseHeadingLevel`, `onError`, `errorFallback`, `menuBar`) | Medium | ✅ | react | Added to `RemyxEditorProps` in `types/index.d.ts` |
+| 202 | TypeScript declarations missing hook exports (`useModal`, `useSelection`, `useContextMenu`, `useSelectionContext`) | Medium | ✅ | react | Added full type declarations for all 4 hooks |
+| 203 | Missing `engines` field in root `package.json` | Medium | ✅ | root | Added `"engines": { "node": ">=18.0.0", "npm": ">=9.0.0" }` |
+| 204 | Missing `.nvmrc` for Node version pinning | Low | ✅ | root | Created `.nvmrc` with `22` |
+| 205 | Icons file exports non-components, breaking React Fast Refresh | Medium | ✅ | react | Extracted `icon()` and `filled()` to `icons/helpers.jsx` |
+| 206 | CI pipeline missing typecheck and coverage steps | Medium | ✅ | root | Added `npm run typecheck` and `npm run test:coverage` to CI |
+| 207 | Missing `rollup-plugin-visualizer` in devDependencies | Low | ✅ | core/react | Added `rollup-plugin-visualizer` to both package devDependencies |
+| 208 | Ghost preview comment misleading in DragDrop | Info | ✅ | core | Fixed comment to accurately describe ghost cleanup |
+| 209 | Missing JSDoc on public AutosaveManager methods | Low | ✅ | core | Added JSDoc to `init()`, `save()`, `checkRecovery()`, `clearRecovery()`, `destroy()` |
+| 210 | Vitest coverage thresholds not configured | Low | ✅ | root | Added coverage thresholds (60% lines/functions/statements, 50% branches) |
 
 ### Optimizations
 
 | # | Title | Priority | Status | Package | File(s) |
 |---|-------|----------|--------|---------|---------|
-| 211 | `document.queryCommandState()` deprecated for format detection | Medium | 🔲 | core | `Selection.js` L398–407 — replace with DOM traversal for active formatting |
-| 212 | Syntax highlighting tokenizer keyword regex could use Trie/Set | Low | 🔲 | core | `tokenizers.js` L54 — 50+ keyword alternation groups per language |
-| 213 | DOMParser created per paste clean (no reuse) | Low | 🔲 | core | `pasteClean.js` L154 — `convertWordListParagraphs()` creates new parser each time |
-| 214 | Duplicate MenuBar import (static + dynamic) in build | Medium | 🔲 | react | Vite warns about MenuBar being both lazily and statically imported |
+| 211 | `document.queryCommandState()` deprecated for format detection | Medium | ✅ | core | Fixed: DOM traversal with `FORMAT_TAG_MAP` Set lookups, `queryCommandState` as fallback |
+| 212 | Syntax highlighting tokenizer keyword regex could use Trie/Set | Low | ✅ | core | Fixed: replaced regex alternation with `keywordMatcher()` Set-based lookups for JS, Python, SQL, Rust, Java |
+| 213 | DOMParser created per paste clean (no reuse) | Low | ✅ | core | Fixed: hoisted `_parser` to module scope for reuse |
+| 214 | Duplicate MenuBar import (static + dynamic) in build | Medium | ✅ | react | Fixed: extracted `collectMenuBarCommands` to standalone module, removed static import of MenuBar |
 
 ---
 
@@ -298,16 +299,16 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 
 | # | Title | Priority | Status | Package | Description |
 |---|-------|----------|--------|---------|-------------|
-| 215 | Styled tooltip component with keyboard shortcut hints | High | 🔲 | react | Replace native `title` attributes on toolbar buttons with a styled tooltip component showing command name + shortcut (e.g., "Bold — ⌘B") |
-| 216 | FloatingToolbar focus indicator and keyboard navigation | Medium | 🔲 | react | Add visible focus ring, arrow-key navigation between buttons, and keep toolbar visible while user interacts with it |
-| 217 | TableControls accessible labels | Medium | 🔲 | react | Replace cryptic "+Row↑", "×" button text with descriptive `aria-label` attributes ("Add row above", "Delete table") |
-| 218 | Loading/spinner states during async modal operations | Medium | 🔲 | react | Show loading indicator on submit buttons in ImageModal, AttachmentModal, ImportDocumentModal during file upload/conversion |
-| 219 | Confirmation dialog before destructive table operations | Medium | 🔲 | react | Add confirmation prompt before "Delete Table" in TableControls to prevent accidental data loss |
-| 220 | ContextMenu arrow-key and Tab keyboard navigation | Medium | 🔲 | react | Add Up/Down arrow key navigation, Home/End, and Enter to execute — matching standard OS context menu patterns |
-| 221 | Visual "unsaved changes" indicator when autosave disabled | Low | 🔲 | react | Show a dot or text indicator (e.g., "Edited") in status bar when content has changed since last programmatic save |
-| 222 | FloatingToolbar stays visible during button interaction | Low | 🔲 | react | Prevent toolbar from disappearing when user clicks a toolbar button (selection collapse hides it prematurely) |
+| 215 | Styled tooltip component with keyboard shortcut hints | High | ✅ | react | Created `Tooltip.jsx` component with 200ms delay, shortcut display; updated ToolbarButton |
+| 216 | FloatingToolbar focus indicator and keyboard navigation | Medium | ✅ | react | Added arrow-key navigation, `:focus-visible` rings, `role="toolbar"`, focus state tracking |
+| 217 | TableControls accessible labels | Medium | ✅ | react | Replaced cryptic text with readable labels and descriptive `aria-label` attributes |
+| 218 | Loading/spinner states during async modal operations | Medium | ✅ | react | Added `loading` state with spinner to ImageModal, AttachmentModal, ImportDocumentModal |
+| 219 | Confirmation dialog before destructive table operations | Medium | ✅ | react | Added `window.confirm()` before "Delete Table" in TableControls |
+| 220 | ContextMenu arrow-key and Tab keyboard navigation | Medium | ✅ | react | Added ArrowUp/Down, Home/End, Enter/Escape, `role="menu"`/`role="menuitem"` |
+| 221 | Visual "unsaved changes" indicator when autosave disabled | Low | ✅ | react | Added "Edited" indicator in StatusBar with dirty state tracking |
+| 222 | FloatingToolbar stays visible during button interaction | Low | ✅ | react | Added `hasFocus` state to keep toolbar visible during button focus |
 
-**0 resolved, 8 open.**
+**8 resolved, 0 open.**
 
 ---
 
@@ -315,18 +316,18 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 
 | # | Title | Priority | Status | Package | Description |
 |---|-------|----------|--------|---------|-------------|
-| 223 | `removeFormat` keyboard shortcut | Medium | 🔲 | core | Add `mod+shift+n` (or `mod+\`) shortcut to the existing `removeFormat` command — currently toolbar/menu only |
-| 224 | Table cell content alignment (left/center/right) | Medium | 🔲 | core | New `alignCell` command to set `text-align` on `<td>`/`<th>` elements; expose in TableControls UI |
-| 225 | Toggle table header row (tbody ↔ thead) | Medium | 🔲 | core | New `toggleTableHeader` command to convert first row between `<tbody><tr><td>` and `<thead><tr><th>` for semantic HTML |
-| 226 | Copy-to-clipboard button on code blocks | Medium | 🔲 | react | Add a "Copy" button overlay on focused/hovered code blocks — standard pattern on GitHub, MDN, documentation sites |
-| 227 | Image alt-text editing after insertion | Medium | 🔲 | react | Allow users to edit alt text and add captions on existing images (click image → edit modal or inline field) |
-| 228 | Embed modal URL preview | Medium | 🔲 | react | Show a live preview of the embed (YouTube thumbnail, etc.) in EmbedModal before insertion |
-| 229 | Text highlight/marker color command | Medium | 🔲 | core | Add a `highlight` command distinct from `backColor` — applies a semi-transparent marker effect to selected text |
-| 230 | Line numbers toggle for code blocks | Low | 🔲 | react | Add a toggle button in CodeBlockControls to show/hide line numbers in the code block |
-| 231 | Max list nesting depth with visual hierarchy | Low | 🔲 | core | Enforce configurable max nesting depth (default 5) for ordered/unordered lists; add CSS indentation per level |
-| 232 | Subscript/superscript shortcut cross-platform audit | Low | 🔲 | core | Verify `mod+,` / `mod+.` shortcuts for subscript/superscript work on Windows/Linux keyboards; add fallback shortcuts if needed |
+| 223 | `removeFormat` keyboard shortcut | Medium | ✅ | core | Added `mod+\\` shortcut to the `removeFormat` command |
+| 224 | Table cell content alignment (left/center/right) | Medium | ✅ | core | Added `alignCell` command accepting `{ direction: 'left'|'center'|'right' }` |
+| 225 | Toggle table header row (tbody ↔ thead) | Medium | ✅ Already done | core | `toggleHeaderRow` command already existed in tables.js |
+| 226 | Copy-to-clipboard button on code blocks | Medium | ✅ Already done | react | Already implemented in SyntaxHighlightPlugin with `ensureCopyButton()` |
+| 227 | Image alt-text editing after insertion | Medium | ✅ | react | Added inline alt-text editing overlay on focused images in ImageResizeHandles |
+| 228 | Embed modal URL preview | Medium | ✅ | react | Added live iframe preview with 500ms debounce for YouTube/Vimeo/Dailymotion URLs |
+| 229 | Text highlight/marker color command | Medium | ✅ | core | Added `highlight` command using `<mark>` tag with 6 color options |
+| 230 | Line numbers toggle for code blocks | Low | ✅ Already done | react | `toggleLineNumbers` command already existed in SyntaxHighlightPlugin |
+| 231 | Max list nesting depth with visual hierarchy | Low | ✅ | core | Added configurable `maxListNestingDepth` (default 5) with CSS per-level bullet styles |
+| 232 | Subscript/superscript shortcut cross-platform audit | Low | ✅ | core | Added `alternateShortcuts` (`mod+shift+,`/`mod+shift+.`) as fallbacks; added support in CommandRegistry |
 
-**0 resolved, 10 open.**
+**10 resolved, 0 open.**
 
 ---
 
@@ -334,11 +335,11 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 
 | # | Title | Priority | Status | Package | Description |
 |---|-------|----------|--------|---------|-------------|
-| 233 | Pre-compile format detection patterns in Selection.js | Medium | 🔲 | core | `getActiveFormats()` L398–442 uses deprecated `queryCommandState` in a loop — replace with pre-compiled tag lookups via DOM traversal |
-| 234 | Debounce or virtualize CommandPalette filtering | Low | 🔲 | react | `filterSlashItems()` runs on every keystroke; for 100+ commands, debounce by ~50ms or virtualize the list |
-| 235 | Memoize toolbar items array construction | Low | 🔲 | react | `Toolbar.jsx` L50–67 rebuilds items array on config changes — wrap in `useMemo` to prevent child re-renders |
+| 233 | Pre-compile format detection patterns in Selection.js | Medium | ✅ | core | Fixed: `FORMAT_TAG_MAP` with Set lookups replaces string comparisons in `getActiveFormats()` |
+| 234 | Debounce or virtualize CommandPalette filtering | Low | ✅ | react | Added 50ms debounce via `debouncedQuery` state in `useSlashCommands` |
+| 235 | Memoize toolbar items array construction | Low | ✅ Already done | react | Already wrapped in `useMemo` with `[toolbarConfig]` dependency |
 
-**0 resolved, 3 open.**
+**3 resolved, 0 open.**
 
 ---
 
@@ -346,80 +347,17 @@ Replaces: ~~BUGS.md~~, ~~SECURITY.md~~, ~~CLEANUP.md~~, ~~OPTIMIZATION.md~~
 
 | Category | Total | Done | Open |
 |----------|-------|------|------|
-| Bugs | 35 | 28 | 7 |
-| Security | 45 | 42 | 3 |
-| Cleanup | 71 | 57 | 14 |
-| Optimizations | 63 | 59 | 4 |
-| UX | 8 | 0 | 8 |
-| Features | 10 | 0 | 10 |
-| Efficiency | 3 | 0 | 3 |
-| **Total** | **235** | **186** | **49** |
+| Bugs | 35 | 35 | 0 |
+| Security | 45 | 45 | 0 |
+| Cleanup | 71 | 71 | 0 |
+| Optimizations | 63 | 63 | 0 |
+| UX | 8 | 8 | 0 |
+| Features | 10 | 10 | 0 |
+| Efficiency | 3 | 3 | 0 |
+| **Total** | **235** | **235** | **0** |
 
 ---
 
 ## Open Tasks by Priority
 
-### High
-| # | Title | Category |
-|---|-------|----------|
-| 187 | Selection cache invalidation compares same variable | BUG |
-| 188 | Slash commands `destroy` monkey-patches engine | BUG |
-| 191 | `useSlashCommands` calls `setState` synchronously in `useEffect` | BUG |
-| 194 | CloudProvider `buildUrl` callback not validated | SEC |
-| 215 | Styled tooltip component with keyboard shortcut hints | UX |
-
-### Medium
-| # | Title | Category |
-|---|-------|----------|
-| 189 | Cut handler missing history snapshot before async | BUG |
-| 190 | `usePortalAttachment` restores `textContent` instead of `innerHTML` | BUG |
-| 192 | `vitest.config.js` uses `__dirname` in ESM | BUG |
-| 193 | React version mismatch across monorepo | BUG |
-| 195 | Pasted font-face URLs preserved without validation | SEC |
-| 197 | `WordCountPlugin` never unsubscribes from EventBus | CLN |
-| 201 | TypeScript declarations missing new props | CLN |
-| 202 | TypeScript declarations missing hook exports | CLN |
-| 203 | Missing `engines` field in root `package.json` | CLN |
-| 205 | Icons file breaks React Fast Refresh | CLN |
-| 206 | CI pipeline missing typecheck and coverage | CLN |
-| 211 | `document.queryCommandState()` deprecated | OPT |
-| 214 | Duplicate MenuBar import in build | OPT |
-| 216 | FloatingToolbar focus indicator and keyboard navigation | UX |
-| 217 | TableControls accessible labels | UX |
-| 218 | Loading/spinner states during async modal operations | UX |
-| 219 | Confirmation dialog before destructive table operations | UX |
-| 220 | ContextMenu arrow-key keyboard navigation | UX |
-| 223 | `removeFormat` keyboard shortcut | FEAT |
-| 224 | Table cell content alignment (left/center/right) | FEAT |
-| 225 | Toggle table header row (tbody ↔ thead) | FEAT |
-| 226 | Copy-to-clipboard button on code blocks | FEAT |
-| 227 | Image alt-text editing after insertion | FEAT |
-| 228 | Embed modal URL preview | FEAT |
-| 229 | Text highlight/marker color command | FEAT |
-| 233 | Pre-compile format detection patterns in Selection.js | EFF |
-
-### Low
-| # | Title | Category |
-|---|-------|----------|
-| 196 | Missing CSRF documentation for CloudProvider | SEC |
-| 198 | Duplicate `_exceedsMaxFileSize` in Clipboard/DragDrop | CLN |
-| 199 | Missing PropTypes on Toolbar sub-components | CLN |
-| 200 | Missing PropTypes on SaveStatus, RecoveryBanner, etc. | CLN |
-| 204 | Missing `.nvmrc` | CLN |
-| 207 | Missing `rollup-plugin-visualizer` devDep | CLN |
-| 209 | Missing JSDoc on AutosaveManager methods | CLN |
-| 210 | Vitest coverage thresholds not configured | CLN |
-| 212 | Tokenizer keyword regex could use Trie/Set | OPT |
-| 213 | DOMParser created per paste clean | OPT |
-| 221 | Visual "unsaved changes" indicator | UX |
-| 222 | FloatingToolbar stays visible during interaction | UX |
-| 230 | Line numbers toggle for code blocks | FEAT |
-| 231 | Max list nesting depth with visual hierarchy | FEAT |
-| 232 | Subscript/superscript shortcut cross-platform audit | FEAT |
-| 234 | Debounce or virtualize CommandPalette filtering | EFF |
-| 235 | Memoize toolbar items array construction | EFF |
-
-### Info
-| # | Title | Category |
-|---|-------|----------|
-| 208 | Ghost preview comment misleading | CLN |
+None — all 235 tasks are resolved. ✅

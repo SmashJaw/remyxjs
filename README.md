@@ -27,6 +27,7 @@ A feature-rich WYSIWYG editor built on a framework-agnostic core with first-clas
 - **Internationalization (i18n)** — 120+ externalized strings, `t()` with interpolation, `registerLocale()` for custom translations, partial locale packs with English fallback
 - **Print stylesheet** — Clean printed output with hidden chrome, page-break control, link URLs, orphan/widow handling
 - **Security** — XSS-safe HTML sanitizer, dangerous tag removal, event handler blocking, CSS injection prevention, iframe domain allowlist (YouTube/Vimeo/Dailymotion), CSP-compatible (zero `execCommand`/`document.write`), SRI hash support for CDN assets
+- **Multi-editor support** — Full instance isolation, `EditorBus` singleton for inter-editor communication (pub/sub, broadcast, registry), `SharedResources` singleton for memory-efficient shared schemas, toolbar presets, icons, and config across 10+ concurrent editors
 - **Performance** — DOM mutation batching, `requestIdleCallback` scheduling, rAF-throttled handlers, operation coalescing in undo/redo, built-in benchmarking tools
 - **Tree-shakeable** — Import only the commands and utilities you need
 
@@ -264,6 +265,7 @@ See the full [@remyxjs/core README](./remyx-core/README.md) for the complete eng
 | Plugin system | Yes | Re-exports from core |
 | Utilities | Yes | Re-exports from core |
 | CSS themes | Yes | Additional component styles |
+| Multi-editor | EditorBus + SharedResources singletons | Re-exports from core |
 | Autosave engine | AutosaveManager + 5 storage providers | useAutosave hook, SaveStatus, RecoveryBanner |
 | React components | — | RemyxEditor, Toolbar, StatusBar, Modals |
 | React hooks | — | useRemyxEditor, useEditorEngine, useSelection, useAutosave |
@@ -275,7 +277,7 @@ See the full [@remyxjs/core README](./remyx-core/README.md) for the complete eng
 ```
 packages/
   create-remyx/   → create-remyx        Reserved for future CLI wizard
-  remyx-core/     → @remyxjs/core         90+ exports, 0 framework deps
+  remyx-core/     → @remyxjs/core         95+ exports, 0 framework deps
   remyx-react/    → @remyxjs/react        React components + hooks + TS types + scaffolding CLI
   docs/           Documentation, changelogs, roadmap, benchmarks
 ```
@@ -304,7 +306,7 @@ npm run build:core
 npm run build:react
 
 # Run tests
-npm test       # 1285 unit tests via Vitest
+npm test       # 1416 unit tests via Vitest
 
 # Run tests in watch mode
 npm run test:watch
@@ -339,7 +341,7 @@ See [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for setup instructions, architectu
 | [NX.md](./docs/NX.md) | Nx monorepo management — build, version, publish, caching, affected commands |
 | [BENCHMARK.md](./docs/BENCHMARK.md) | Build, bundle, test, and lint performance metrics |
 | [PLANNED_PACKAGES.md](./docs/PLANNED_PACKAGES.md) | Multi-package restructure plan and progress |
-| [TASKS.md](./docs/TASKS.md) | All bugs, security fixes, cleanup items, and optimizations (numbered reference) |
+| [TASKS.md](./docs/TASKS.md) | All 235 bugs, security fixes, cleanup items, optimizations, UX, and features (all resolved) |
 
 ## License
 

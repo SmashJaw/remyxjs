@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const STATUS_LABELS = {
   saved: 'Saved',
@@ -26,3 +27,7 @@ function SaveStatusInner({ saveStatus }) {
 }
 
 export const SaveStatus = React.memo(SaveStatusInner)
+
+SaveStatus.propTypes = {
+  saveStatus: PropTypes.oneOf(['saved', 'saving', 'unsaved', 'error']).isRequired,
+}

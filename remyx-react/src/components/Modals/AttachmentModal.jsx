@@ -103,7 +103,12 @@ export function AttachmentModal({ open, onClose, engine }) {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
               >
-                {uploading ? 'Uploading...' : 'Choose File'}
+                {uploading ? (
+                  <>
+                    <span className="rmx-spinner" aria-hidden="true" />
+                    {' Uploading\u2026'}
+                  </>
+                ) : 'Choose File'}
               </button>
               <p className="rmx-upload-hint">or drag and drop a file into the editor</p>
             </>
@@ -149,7 +154,12 @@ export function AttachmentModal({ open, onClose, engine }) {
         <div className="rmx-modal-actions">
           <button type="button" className="rmx-btn" onClick={handleClose}>Cancel</button>
           <button type="submit" className="rmx-btn rmx-btn-primary" disabled={!url.trim() || uploading}>
-            Insert
+            {uploading ? (
+              <>
+                <span className="rmx-spinner" aria-hidden="true" />
+                {' Uploading\u2026'}
+              </>
+            ) : 'Insert'}
           </button>
         </div>
       </form>

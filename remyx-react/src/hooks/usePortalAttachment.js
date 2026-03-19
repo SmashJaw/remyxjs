@@ -40,12 +40,12 @@ export function usePortalAttachment({ attachTo, value, defaultValue, onChange })
       }
     } else {
       // For divs/other elements: save original content as text, render editor inside
-      const originalContent = target.textContent
+      const originalContent = target.innerHTML
       target.innerHTML = ''
       target.appendChild(container)
 
       attachCleanupRef.current = () => {
-        target.textContent = originalContent
+        target.innerHTML = originalContent
       }
     }
 

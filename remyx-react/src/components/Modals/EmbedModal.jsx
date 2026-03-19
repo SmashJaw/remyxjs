@@ -1,11 +1,49 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { ModalOverlay } from './ModalOverlay.jsx'
 
 const DANGEROUS_PROTOCOL = /^\s*(javascript|vbscript|data\s*:\s*text\/html)\s*:/i
 
+const ALLOWED_EMBED_DOMAINS = [
+  { pattern: /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/, toEmbed: (id) => `https://www.youtube.com/embed/${id}` },
+  { pattern: /vimeo\.com\/(\d+)/, toEmbed: (id) => `https://player.vimeo.com/video/${id}` },
+  { pattern: /dailymotion\.com\/video\/([a-zA-Z0-9]+)/, toEmbed: (id) => `https://www.dailymotion.com/embed/video/${id}` },
+]
+
+function getEmbedUrl(url) {
+  if (!url) return null
+  for (const domain of ALLOWED_EMBED_DOMAINS) {
+    const match = url.match(domain.pattern)
+    if (match) return domain.toEmbed(match[1])
+  }
+  return null
+}
+
 export function EmbedModal({ open, onClose, engine }) {
   const [url, setUrl] = useState('')
+  const [previewUrl, setPreviewUrl] = useState(null)
+  const debounceRef = useRef(null)
+
+  // Debounce the preview URL update
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (!url.trim()) {
+      setPreviewUrl(null)
+      return
+    }
+    debounceRef.current = setTimeout(() => {
+      setPreviewUrl(getEmbedUrl(url.trim()))
+    }, 500)
+    return () => clearTimeout(debounceRef.current)
+  }, [url])
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!open) {
+      setUrl('')
+      setPreviewUrl(null)
+    }
+  }, [open])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -39,6 +77,25 @@ export function EmbedModal({ open, onClose, engine }) {
           />
         </div>
         <p className="rmx-form-hint">Supports YouTube, Vimeo, and Dailymotion URLs</p>
+
+        {url.trim() && (
+          <div className="rmx-embed-preview">
+            {previewUrl ? (
+              <iframe
+                src={previewUrl}
+                title="Embed preview"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                sandbox="allow-scripts allow-same-origin allow-presentation"
+              />
+            ) : (
+              <div className="rmx-embed-preview-placeholder">
+                Enter a valid YouTube, Vimeo, or Dailymotion URL to see a preview
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="rmx-modal-actions">
           <button type="button" className="rmx-btn" onClick={onClose}>Cancel</button>
           <button type="submit" className="rmx-btn rmx-btn-primary" disabled={!url.trim()}>Embed</button>

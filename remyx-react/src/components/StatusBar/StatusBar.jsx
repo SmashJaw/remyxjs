@@ -4,6 +4,7 @@ import { SaveStatus } from '../SaveStatus/SaveStatus.jsx'
 
 function StatusBarInner({ engine, position = 'bottom', saveStatus, showSaveStatus }) {
   const [counts, setCounts] = useState({ wordCount: 0, charCount: 0 })
+  const [dirty, setDirty] = useState(false)
 
   // Shallow comparison before setting counts to avoid unnecessary re-renders
   const updateCounts = useCallback((newCounts) => {
@@ -22,13 +23,38 @@ function StatusBarInner({ engine, position = 'bottom', saveStatus, showSaveStatu
     return unsub
   }, [engine, updateCounts])
 
+  // Track dirty state: set on content:change, clear on save
+  useEffect(() => {
+    if (!engine) return
+    const markDirty = () => setDirty(true)
+    const markClean = () => setDirty(false)
+    const unsubs = [
+      engine.eventBus.on('content:change', markDirty),
+      engine.eventBus.on('autosave:saved', markClean),
+      engine.eventBus.on('save', markClean),
+    ]
+    return () => unsubs.forEach(fn => fn())
+  }, [engine])
+
   const className = `rmx-statusbar${position === 'top' ? ' rmx-statusbar-top' : ''}`
+
+  // Show "Edited" indicator when content has changed and autosave is not active
+  const showDirtyIndicator = dirty && !showSaveStatus
 
   return (
     <div className={className}>
       {showSaveStatus && (
         <>
           <SaveStatus saveStatus={saveStatus} />
+          <span className="rmx-statusbar-sep" aria-hidden="true" />
+        </>
+      )}
+      {showDirtyIndicator && (
+        <>
+          <span className="rmx-statusbar-dirty" role="status" aria-live="polite">
+            <span className="rmx-statusbar-dirty-dot" aria-hidden="true" />
+            Edited
+          </span>
           <span className="rmx-statusbar-sep" aria-hidden="true" />
         </>
       )}

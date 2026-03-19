@@ -1,7 +1,7 @@
 import { cleanPastedHTML, looksLikeMarkdown } from '../utils/pasteClean.js'
 import { markdownToHtml } from '../utils/markdownConverter.js'
 import { isImportableFile, convertDocument } from '../utils/documentConverter/index.js'
-import { DEFAULT_MAX_FILE_SIZE } from '../constants/defaults.js'
+import { exceedsMaxFileSize } from '../utils/fileValidation.js'
 
 export class Clipboard {
   constructor(engine) {
@@ -199,6 +199,8 @@ export class Clipboard {
   }
 
   _handleCut() {
+    // Capture state before the cut happens
+    this.engine.history.snapshot()
     // Let browser handle default cut, just record for undo
     setTimeout(() => {
       this.engine.eventBus.emit('content:change')
@@ -211,15 +213,7 @@ export class Clipboard {
    * @returns {boolean} true if the file is too large
    */
   _exceedsMaxFileSize(file) {
-    const maxSize = this.engine.options.maxFileSize ?? DEFAULT_MAX_FILE_SIZE
-    if (maxSize > 0 && file.size > maxSize) {
-      const sizeMB = (file.size / (1024 * 1024)).toFixed(1)
-      const limitMB = (maxSize / (1024 * 1024)).toFixed(0)
-      console.warn(`[Remyx] File "${file.name}" (${sizeMB} MB) exceeds the ${limitMB} MB limit.`)
-      this.engine.eventBus.emit('file:too-large', { file, maxSize })
-      return true
-    }
-    return false
+    return exceedsMaxFileSize(file, this.engine.options.maxFileSize, { eventBus: this.engine.eventBus })
   }
 
   _getCaretCell() {

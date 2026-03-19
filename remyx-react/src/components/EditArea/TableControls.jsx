@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 
 export function TableControls({ table, engine, editorRect }) {
   if (!table || !engine || !editorRect) return null
@@ -6,6 +6,12 @@ export function TableControls({ table, engine, editorRect }) {
   const tableRect = table.getBoundingClientRect()
   const top = tableRect.top - editorRect.top
   const left = tableRect.left - editorRect.left
+
+  const handleDeleteTable = useCallback(() => {
+    if (window.confirm('Are you sure you want to delete this table? This cannot be undone.')) {
+      engine.executeCommand('deleteTable')
+    }
+  }, [engine])
 
   return (
     <div
@@ -16,42 +22,47 @@ export function TableControls({ table, engine, editorRect }) {
       <button
         className="rmx-table-control-btn"
         onClick={() => engine.executeCommand('addRowBefore')}
-        title="Insert Row Above"
+        aria-label="Add row above"
+        title="Add row above"
         type="button"
       >
-        +Row↑
+        +Row
       </button>
       <button
         className="rmx-table-control-btn"
         onClick={() => engine.executeCommand('addRowAfter')}
-        title="Insert Row Below"
+        aria-label="Add row below"
+        title="Add row below"
         type="button"
       >
-        +Row↓
+        Row+
       </button>
       <button
         className="rmx-table-control-btn"
         onClick={() => engine.executeCommand('addColBefore')}
-        title="Insert Column Left"
+        aria-label="Add column before"
+        title="Add column before"
         type="button"
       >
-        +Col←
+        +Col
       </button>
       <button
         className="rmx-table-control-btn"
         onClick={() => engine.executeCommand('addColAfter')}
-        title="Insert Column Right"
+        aria-label="Add column after"
+        title="Add column after"
         type="button"
       >
-        +Col→
+        Col+
       </button>
       <button
         className="rmx-table-control-btn rmx-danger"
-        onClick={() => engine.executeCommand('deleteTable')}
-        title="Delete Table"
+        onClick={handleDeleteTable}
+        aria-label="Delete table"
+        title="Delete table"
         type="button"
       >
-        ×
+        Delete
       </button>
     </div>
   )

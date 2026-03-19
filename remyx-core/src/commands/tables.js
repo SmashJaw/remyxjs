@@ -66,6 +66,16 @@ export function registerTableCommands(engine) {
     meta: { tooltip: 'Toggle Header Row' },
   })
 
+  engine.commands.register('alignCell', {
+    execute(eng, { direction = 'left' } = {}) {
+      const td = eng.selection.getClosestElement('td') || eng.selection.getClosestElement('th')
+      if (!td) return
+      if (!['left', 'center', 'right'].includes(direction)) return
+      td.style.textAlign = direction
+    },
+    meta: { tooltip: 'Align Cell Content' },
+  })
+
   engine.commands.register('addRowBefore', {
     execute(eng) {
       const td = eng.selection.getClosestElement('td') || eng.selection.getClosestElement('th')

@@ -3,6 +3,7 @@ import { createPlugin } from '../createPlugin.js'
 export function WordCountPlugin() {
   let observer = null
   let debounceTimer = null
+  let unsubContentChange = null
 
   return createPlugin({
     name: 'wordCount',
@@ -24,7 +25,7 @@ export function WordCountPlugin() {
       }
 
       // Primary: listen for content:change events from the engine
-      engine.eventBus.on('content:change', update)
+      unsubContentChange = engine.eventBus.on('content:change', update)
 
       // Fallback: MutationObserver catches any DOM changes that don't
       // trigger content:change (e.g. paste in some browsers, execCommand
@@ -41,6 +42,10 @@ export function WordCountPlugin() {
 
     destroy() {
       clearTimeout(debounceTimer)
+      if (unsubContentChange) {
+        unsubContentChange()
+        unsubContentChange = null
+      }
       if (observer) {
         observer.disconnect()
         observer = null

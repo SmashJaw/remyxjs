@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { SLASH_COMMAND_ITEMS, filterSlashItems } from '@remyxjs/core'
 
 /**
@@ -16,20 +16,27 @@ export function useSlashCommands(engine, editorRootRef, options = {}) {
   const [visible, setVisible] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [query, setQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const filteredItemsRef = useRef(allItems)
+  const debounceRef = useRef(null)
 
-  const filteredItems = filterSlashItems(allItems, query)
+  // Debounce query to avoid filtering on every keystroke
+  useEffect(() => {
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => setDebouncedQuery(query), 50)
+    return () => clearTimeout(debounceRef.current)
+  }, [query])
+
+  const filteredItems = useMemo(
+    () => filterSlashItems(allItems, debouncedQuery),
+    [allItems, debouncedQuery]
+  )
 
   // Sync ref in effect to avoid updating ref during render
   useEffect(() => {
     filteredItemsRef.current = filteredItems
   }, [filteredItems])
-
-  // Reset selected index when filtered items change
-  useEffect(() => {
-    setSelectedIndex(0)
-  }, [query])
 
   // Listen for slash:open from engine
   useEffect(() => {
@@ -56,6 +63,7 @@ export function useSlashCommands(engine, editorRootRef, options = {}) {
 
     const unsubQuery = engine.eventBus.on('slash:query', ({ query: q }) => {
       setQuery(q)
+      setSelectedIndex(0)
     })
 
     const unsubClose = engine.eventBus.on('slash:close', () => {

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { DEFAULT_COLORS } from '@remyxjs/core'
 import { ICON_MAP } from '../../icons/index.jsx'
 
@@ -78,3 +79,11 @@ export const ToolbarColorPicker = React.memo(function ToolbarColorPicker({ comma
     </div>
   )
 })
+
+ToolbarColorPicker.propTypes = {
+  command: PropTypes.string.isRequired,
+  tooltip: PropTypes.string,
+  currentColor: PropTypes.string,
+  onColorSelect: PropTypes.func.isRequired,
+  itemStyle: PropTypes.object,
+}

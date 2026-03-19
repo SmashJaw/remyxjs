@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 /**
  * Compute a human-readable relative time string from a timestamp.
@@ -76,3 +77,12 @@ function RecoveryBannerInner({ recoveryData, onRecover, onDismiss }) {
 }
 
 export const RecoveryBanner = React.memo(RecoveryBannerInner)
+
+RecoveryBanner.propTypes = {
+  recoveryData: PropTypes.shape({
+    recoveredContent: PropTypes.string.isRequired,
+    timestamp: PropTypes.number.isRequired,
+  }),
+  onRecover: PropTypes.func.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+}

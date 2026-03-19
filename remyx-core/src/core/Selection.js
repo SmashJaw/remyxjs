@@ -2,6 +2,16 @@
 const HEADING_REGEX = /^h[1-6]$/
 const BLOCK_TAGS = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'BLOCKQUOTE', 'PRE', 'LI', 'TD', 'TH'])
 
+// Pre-compiled format tag map for O(1) lookups (avoids repeated string comparisons)
+const FORMAT_TAG_MAP = {
+  bold: new Set(['STRONG', 'B']),
+  italic: new Set(['EM', 'I']),
+  underline: new Set(['U']),
+  strikethrough: new Set(['S', 'DEL']),
+  subscript: new Set(['SUB']),
+  superscript: new Set(['SUP']),
+}
+
 /**
  * @typedef {Object} SelectionBookmark
  * @property {number} startOffset - Character offset of the selection start within the editor
@@ -86,9 +96,12 @@ export class Selection {
     }
     this._cachedRange = range
     // Schedule cache invalidation at end of current synchronous cycle
-    if (this._cacheGeneration === this._cacheGeneration) {
-      Promise.resolve().then(() => { this._cachedRange = null })
-    }
+    const gen = ++this._cacheGeneration
+    Promise.resolve().then(() => {
+      if (this._cacheGeneration === gen) {
+        this._cachedRange = null
+      }
+    })
     return range
   }
 
@@ -412,13 +425,31 @@ export class Selection {
       backColor: null,
     }
 
+    // Detect inline formats via DOM traversal using pre-compiled FORMAT_TAG_MAP
     try {
-      formats.bold = document.queryCommandState('bold')
-      formats.italic = document.queryCommandState('italic')
-      formats.underline = document.queryCommandState('underline')
-      formats.strikethrough = document.queryCommandState('strikeThrough')
-      formats.subscript = document.queryCommandState('subscript')
-      formats.superscript = document.queryCommandState('superscript')
+      const sel = window.getSelection()
+      if (sel && sel.rangeCount > 0) {
+        let node = sel.anchorNode
+        // Walk up from the anchor node to the editor root, checking tag names against Sets
+        while (node && node !== this.editor) {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const tag = node.tagName
+            for (const format in FORMAT_TAG_MAP) {
+              if (!formats[format] && FORMAT_TAG_MAP[format].has(tag)) {
+                formats[format] = true
+              }
+            }
+          }
+          node = node.parentNode
+        }
+      }
+      // Fallback to queryCommandState for formats not detectable via DOM (e.g. browser-applied styles)
+      if (!formats.bold) formats.bold = document.queryCommandState('bold')
+      if (!formats.italic) formats.italic = document.queryCommandState('italic')
+      if (!formats.underline) formats.underline = document.queryCommandState('underline')
+      if (!formats.strikethrough) formats.strikethrough = document.queryCommandState('strikeThrough')
+      if (!formats.subscript) formats.subscript = document.queryCommandState('subscript')
+      if (!formats.superscript) formats.superscript = document.queryCommandState('superscript')
     } catch {
       // queryCommandState can throw in some edge cases
     }

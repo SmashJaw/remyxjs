@@ -181,11 +181,10 @@ export function registerSlashCommands(engine) {
 
   engine.element.addEventListener('keydown', handleKeyDown, true)
 
-  // Store cleanup for destroy
-  const originalDestroy = engine.destroy.bind(engine)
-  engine.destroy = () => {
+  // Register cleanup on engine destroy event
+  const cleanup = () => {
     engine.element?.removeEventListener('keydown', handleKeyDown, true)
     unsubExecute()
-    originalDestroy()
   }
+  engine.eventBus.on('destroy', cleanup)
 }

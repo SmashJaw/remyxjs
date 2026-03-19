@@ -1,7 +1,7 @@
 import { cleanPastedHTML, looksLikeMarkdown } from '../utils/pasteClean.js'
 import { markdownToHtml } from '../utils/markdownConverter.js'
 import { isImportableFile, convertDocument } from '../utils/documentConverter/index.js'
-import { DEFAULT_MAX_FILE_SIZE } from '../constants/defaults.js'
+import { exceedsMaxFileSize } from '../utils/fileValidation.js'
 
 /** Custom MIME type for inter-editor content transfer */
 const REMYX_MIME = 'application/x-remyx-content'
@@ -505,10 +505,9 @@ export class DragDrop {
     const offsetY = e.clientY - rect.top
     e.dataTransfer.setDragImage(ghost, offsetX, offsetY)
 
-    // Clean up ghost after a frame (browser captures it synchronously)
-    requestAnimationFrame(() => {
-      // Keep ghost for visual feedback, remove on drag end
-    })
+    // The browser captures the ghost image synchronously during dragstart,
+    // so we keep it in the DOM until drag end (_removeGhostPreview in _cleanupDrag).
+    // No further action needed here per frame.
   }
 
   _removeGhostPreview() {
@@ -581,15 +580,7 @@ export class DragDrop {
    * @returns {boolean} true if the file is too large
    */
   _exceedsMaxFileSize(file) {
-    const maxSize = this.engine.options.maxFileSize ?? DEFAULT_MAX_FILE_SIZE
-    if (maxSize > 0 && file.size > maxSize) {
-      const sizeMB = (file.size / (1024 * 1024)).toFixed(1)
-      const limitMB = (maxSize / (1024 * 1024)).toFixed(0)
-      console.warn(`[Remyx] File "${file.name}" (${sizeMB} MB) exceeds the ${limitMB} MB limit.`)
-      this.engine.eventBus.emit('file:too-large', { file, maxSize })
-      return true
-    }
-    return false
+    return exceedsMaxFileSize(file, this.engine.options.maxFileSize, { eventBus: this.engine.eventBus })
   }
 
   _handleImageDrop(e, imageFiles) {

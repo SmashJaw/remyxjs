@@ -60,7 +60,10 @@ export class AutosaveManager {
 
   /**
    * Start listening for content changes and begin periodic saves.
-   * Call this after the engine is fully initialized.
+   * Subscribes to `content:change` events on the engine's EventBus,
+   * starts a periodic save interval, and registers a `beforeunload`
+   * handler for last-chance saves. Call this after the engine is fully initialized.
+   * @returns {void}
    */
   init() {
     if (!this.enabled || this._destroyed) return
@@ -88,7 +91,11 @@ export class AutosaveManager {
   }
 
   /**
-   * Stop all timers, remove listeners, and perform a final save.
+   * Stop all timers, remove event listeners, and perform a final save.
+   * Clears the debounce timer, periodic interval, content:change subscription,
+   * and beforeunload handler. A fire-and-forget save is attempted before the
+   * instance is marked as destroyed.
+   * @returns {void}
    */
   destroy() {
     // Clear timers
@@ -124,7 +131,11 @@ export class AutosaveManager {
 
   /**
    * Save the current editor content to the storage provider.
-   * Deduplicates by comparing against last saved content.
+   * Deduplicates by comparing against the last saved content to avoid
+   * redundant writes. Prevents concurrent saves; if a save is requested
+   * while one is in progress, it is queued and retried with exponential
+   * backoff on failure.
+   * @returns {Promise<void>}
    */
   async save() {
     if (!this.engine || this._destroyed) return
@@ -176,9 +187,11 @@ export class AutosaveManager {
   }
 
   /**
-   * Check if there is recoverable content that differs from the current editor content.
-   * @param {string} currentContent - The editor's current HTML content
-   * @returns {Promise<{recoveredContent: string, timestamp: number}|null>}
+   * Check the storage provider for recoverable content from a previous session.
+   * Compares stored content against the current editor HTML and returns
+   * recovery data only when the stored version differs meaningfully.
+   * @param {string} currentContent - The editor's current HTML content to compare against
+   * @returns {Promise<{recoveredContent: string, timestamp: number}|null>} Recovery data if available, or null
    */
   async checkRecovery(currentContent) {
     try {
@@ -204,7 +217,10 @@ export class AutosaveManager {
   }
 
   /**
-   * Clear the stored recovery content.
+   * Clear the stored recovery content from the provider.
+   * Typically called after the user dismisses a recovery banner
+   * or restores the recovered content.
+   * @returns {Promise<void>}
    */
   async clearRecovery() {
     try {

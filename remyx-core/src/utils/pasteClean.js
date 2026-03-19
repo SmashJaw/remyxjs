@@ -7,6 +7,9 @@
  * avoiding unnecessary regex passes for unrelated sources.
  */
 
+// Reusable DOMParser instance (avoid creating a new one per paste clean call)
+const _parser = typeof DOMParser !== 'undefined' ? new DOMParser() : null
+
 // Pre-compiled regex patterns for list detection (hoisted from inner loop)
 const BULLET_PATTERN = /^[\s]*[·•●○◦▪▫–—-]\s*/
 const NUMBER_PATTERN = /^[\s]*\d+[.)]\s*/
@@ -117,6 +120,9 @@ export function cleanPastedHTML(html) {
 
   // ── Common cleanup (always run) ──
 
+  // Remove @font-face declarations (may contain tracking URLs)
+  cleaned = cleaned.replace(/@font-face\s*\{[^}]*\}/gi, '')
+
   // Remove empty style attributes
   cleaned = cleaned.replace(/\s*style="\s*"/gi, '')
 
@@ -169,8 +175,8 @@ export function cleanPastedHTML(html) {
  *   <p style="margin-left:36pt;text-indent:-18pt">1.  Item text</p>
  */
 function convertWordListParagraphs(html) {
-  const parser = new DOMParser()
-  const doc = parser.parseFromString(`<body>${html}</body>`, 'text/html')
+  if (!_parser) return html
+  const doc = _parser.parseFromString(`<body>${html}</body>`, 'text/html')
   const paragraphs = doc.querySelectorAll('p')
 
   let inList = false

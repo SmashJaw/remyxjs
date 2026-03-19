@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { CloseIcon } from '../../icons/index.jsx'
 
 const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea, input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -105,3 +106,11 @@ function ModalOverlayInner({ title, open, onClose, children, width = 420 }) {
 }
 
 export const ModalOverlay = React.memo(ModalOverlayInner)
+
+ModalOverlay.propTypes = {
+  title: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  children: PropTypes.node,
+  width: PropTypes.number,
+}

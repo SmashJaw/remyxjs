@@ -68,7 +68,12 @@ export function ImportDocumentModal({ open, onClose, engine }) {
           onClick={() => fileInputRef.current?.click()}
           disabled={converting}
         >
-          {converting ? 'Converting...' : 'Choose Document'}
+          {converting ? (
+            <>
+              <span className="rmx-spinner" aria-hidden="true" />
+              {' Converting\u2026'}
+            </>
+          ) : 'Choose Document'}
         </button>
         <p className="rmx-upload-hint">
           Supported: {formats}
@@ -132,7 +137,12 @@ export function ImportDocumentModal({ open, onClose, engine }) {
           disabled={!preview || converting}
           onClick={handleInsert}
         >
-          Insert
+          {converting ? (
+            <>
+              <span className="rmx-spinner" aria-hidden="true" />
+              {' Converting\u2026'}
+            </>
+          ) : 'Insert'}
         </button>
       </div>
     </ModalOverlay>

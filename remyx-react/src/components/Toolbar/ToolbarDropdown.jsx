@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { ChevronDownIcon } from '../../icons/index.jsx'
 
 export const ToolbarDropdown = React.memo(function ToolbarDropdown({ label, value, options, onChange, tooltip, icon: Icon, width = 120, itemStyle }) {
@@ -66,3 +67,20 @@ export const ToolbarDropdown = React.memo(function ToolbarDropdown({ label, valu
     </div>
   )
 })
+
+ToolbarDropdown.propTypes = {
+  label: PropTypes.string,
+  value: PropTypes.string,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      style: PropTypes.object,
+    })
+  ).isRequired,
+  onChange: PropTypes.func.isRequired,
+  tooltip: PropTypes.string,
+  icon: PropTypes.elementType,
+  width: PropTypes.number,
+  itemStyle: PropTypes.object,
+}

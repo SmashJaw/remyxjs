@@ -3,7 +3,7 @@
 # Remyx Editor Roadmap
 
 **Current Version:** 0.28.0 (unreleased)
-**Status:** Multi-package architecture complete (`@remyxjs/core` + `@remyxjs/react`), unified 6-theme system, autosave with pluggable storage, command palette, CLI scaffolding with theme picker, code block syntax highlighting with 11 languages, enhanced tables with sorting, filtering, formulas, cell formatting, resize handles, and clipboard interop, security hardening with iframe domain allowlist, CSP-compatible build, and SRI support
+**Status:** Multi-package architecture complete (`@remyxjs/core` + `@remyxjs/react`), unified 6-theme system, autosave with pluggable storage, command palette, CLI scaffolding with theme picker, code block syntax highlighting with 11 languages, enhanced tables with sorting/filtering/formulas/cell formatting/resize/clipboard interop, security hardening (iframe allowlist, CSP-compatible, SRI), inter-editor communication (`EditorBus`), shared resource singletons (`SharedResources`), RTL/i18n/print support, 235/235 TASKS.md items resolved, 1416 tests passing
 
 A living document outlining planned features, improvements, and long-term direction for the Remyx rich-text editor. Sections are ordered by priority — security and stability first, then features ranked by user impact.
 
@@ -60,8 +60,8 @@ A living document outlining planned features, improvements, and long-term direct
 - ~~Full instance isolation: each editor gets its own engine, history, and event bus~~
 - ~~No DOM ID collisions — all selectors scoped to the editor root~~
 - ~~Shared configuration via a `<RemyxConfigProvider>` context wrapper~~
-- Inter-editor communication bus for linked editors (e.g., source + preview)
-- Memory-efficient shared singleton for icons, sanitizer schema, and toolbar config
+- ~~Inter-editor communication bus for linked editors (e.g., source + preview)~~ — `EditorBus` singleton with register/unregister, pub/sub, and `broadcast()` to push events into every editor's local event loop
+- ~~Memory-efficient shared singleton for icons, sanitizer schema, and toolbar config~~ — `SharedResources` singleton with lazily-initialized, deeply-frozen schema, toolbar presets, defaults, keybindings, command metadata, and a shared icon registry
 - ~~Stress-tested with 10+ concurrent editors on a single page~~
 
 ## ~~Menu Bar~~ ✅ Shipped
@@ -116,11 +116,11 @@ These items protect users from XSS, data loss, and crashes. They should be addre
 - ~~CSP-compatible build: eliminate all `document.write`, `execCommand`, and inline style dependencies~~ — all 30+ `document.execCommand()` calls replaced with Selection/Range-based DOM manipulation across formatting, heading, alignment, list, block, and font commands; `document.write()` replaced with `iframe.srcdoc` in PDF export; `Selection.insertHTML` uses `template.innerHTML` + `range.insertNode`; context menu uses Clipboard API
 - ~~Subresource integrity (SRI) hashes for CDN-loaded assets (Google Fonts, external scripts)~~ — `loadGoogleFonts()` accepts `{ integrity, crossOrigin }` options for SRI hash verification on the injected `<link>` element; `crossOrigin='anonymous'` set by default for CORS font loading
 - ~~Fix `dangerouslySetInnerHTML` fallback logic in ImportDocumentModal~~
-- See [TASKS.md](./TASKS.md) for the full audit report (42 security items, 42 resolved, 0 open)
+- See [TASKS.md](./TASKS.md) for the full audit report (45 security items, 45 resolved, 0 open)
 
 ## Quality Improvements
 
-- ~~Comprehensive unit test suite (Vitest) for engine, commands, sanitizer, and converters~~ — 52 test files, 1314 tests across both packages
+- ~~Comprehensive unit test suite (Vitest) for engine, commands, sanitizer, and converters~~ — 57 test files, 1416 tests across both packages
 - ~~End-to-end tests (Playwright)~~ — Removed; the repo does not serve a production web server. Will revisit when a hosted demo is available.
 - ~~XSS-specific test coverage for all modal components (LinkModal, ImageModal, SourceModal, etc.)~~
 - ~~Visual regression tests for theme and layout stability~~ — Playwright config with `toHaveScreenshot()`, per-theme baseline snapshots, `maxDiffPixelRatio: 0.01` threshold. Infrastructure ready; tests added as hosted demo becomes available.
@@ -152,7 +152,7 @@ These items protect users from XSS, data loss, and crashes. They should be addre
 - Lazy plugin loading: plugins initialize on first use, not on editor mount
 - Compressed undo history: store diffs instead of full snapshots to reduce memory usage
 - Input batching: coalesce rapid keystrokes into single DOM updates to eliminate layout thrash
-- See [TASKS.md](./TASKS.md) for the full optimization inventory (59 items, 59 resolved, 0 open)
+- See [TASKS.md](./TASKS.md) for the full optimization inventory (63 items, 63 resolved, 0 open)
 
 ## Build & DevOps
 

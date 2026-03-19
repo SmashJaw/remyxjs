@@ -14,11 +14,12 @@ export function ImageModal({ open, onClose, engine }) {
   const [alt, setAlt] = useState('')
   const [width, setWidth] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const fileInputRef = useRef(null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!src.trim()) return
+    if (!src.trim() || loading) return
     const trimmedSrc = src.trim()
     // Block anything not matching the allowlist (blocks javascript:, vbscript:, data:image/svg+xml, etc.)
     if (!SAFE_IMAGE_URL.test(trimmedSrc) && !SAFE_DATA_IMAGE.test(trimmedSrc)) return
@@ -32,6 +33,7 @@ export function ImageModal({ open, onClose, engine }) {
     setAlt('')
     setWidth('')
     setError('')
+    setLoading(false)
   }
 
   const handleFileChange = (e) => {
@@ -40,18 +42,27 @@ export function ImageModal({ open, onClose, engine }) {
 
     setError('')
     if (engine.options.uploadHandler) {
+      setLoading(true)
       engine.options.uploadHandler(file).then((url) => {
         setSrc(url)
         setTab('url')
+        setLoading(false)
       }).catch((err) => {
         console.error('Image upload failed:', err)
         setError(err.message || 'Image upload failed. Please try again.')
+        setLoading(false)
       })
     } else {
+      setLoading(true)
       const reader = new FileReader()
       reader.onload = (ev) => {
         setSrc(ev.target.result)
         setTab('url')
+        setLoading(false)
+      }
+      reader.onerror = () => {
+        setError('Failed to read file.')
+        setLoading(false)
       }
       reader.readAsDataURL(file)
     }
@@ -89,8 +100,16 @@ export function ImageModal({ open, onClose, engine }) {
             type="button"
             className="rmx-btn rmx-btn-upload"
             onClick={() => fileInputRef.current?.click()}
+            disabled={loading}
           >
-            Choose Image File
+            {loading ? (
+              <>
+                <span className="rmx-spinner" aria-hidden="true" />
+                {' Uploading\u2026'}
+              </>
+            ) : (
+              'Choose Image File'
+            )}
           </button>
           <p className="rmx-upload-hint">or drag and drop an image into the editor</p>
         </div>
@@ -140,8 +159,15 @@ export function ImageModal({ open, onClose, engine }) {
         </div>
         <div className="rmx-modal-actions">
           <button type="button" className="rmx-btn" onClick={onClose}>Cancel</button>
-          <button type="submit" className="rmx-btn rmx-btn-primary" disabled={!src.trim()}>
-            Insert
+          <button type="submit" className="rmx-btn rmx-btn-primary" disabled={!src.trim() || loading}>
+            {loading ? (
+              <>
+                <span className="rmx-spinner" aria-hidden="true" />
+                {' Uploading\u2026'}
+              </>
+            ) : (
+              'Insert'
+            )}
           </button>
         </div>
       </form>

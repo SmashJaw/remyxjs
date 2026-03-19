@@ -15,7 +15,7 @@ vi.mock('@remyxjs/core', () => ({
 }))
 
 // Mock collectMenuBarCommands
-vi.mock('../components/MenuBar/MenuBar.jsx', () => ({
+vi.mock('../components/MenuBar/collectMenuBarCommands.js', () => ({
   collectMenuBarCommands: vi.fn((config) => {
     const cmds = new Set()
     for (const menu of config) {

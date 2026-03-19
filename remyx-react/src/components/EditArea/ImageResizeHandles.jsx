@@ -1,9 +1,27 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 
 export function ImageResizeHandles({ image, engine, editorRect }) {
   const [resizing, setResizing] = useState(false)
   const [startPos, setStartPos] = useState(null)
   const [startSize, setStartSize] = useState(null)
+  const [editingAlt, setEditingAlt] = useState(false)
+  const [altText, setAltText] = useState('')
+  const altInputRef = useRef(null)
+
+  // Sync alt text when image changes
+  useEffect(() => {
+    if (image) {
+      setAltText(image.getAttribute('alt') || '')
+      setEditingAlt(false)
+    }
+  }, [image])
+
+  // Focus the alt input when editing starts
+  useEffect(() => {
+    if (editingAlt && altInputRef.current) {
+      altInputRef.current.focus()
+    }
+  }, [editingAlt])
 
   if (!image || !editorRect) return null
 
@@ -48,6 +66,24 @@ export function ImageResizeHandles({ image, engine, editorRect }) {
     }
   }, [resizing, startPos, startSize, image, engine])
 
+  const handleAltSave = useCallback(() => {
+    if (image) {
+      image.setAttribute('alt', altText)
+      engine?.eventBus.emit('content:change')
+    }
+    setEditingAlt(false)
+  }, [image, altText, engine])
+
+  const handleAltKeyDown = useCallback((e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAltSave()
+    } else if (e.key === 'Escape') {
+      setEditingAlt(false)
+      setAltText(image?.getAttribute('alt') || '')
+    }
+  }, [handleAltSave, image])
+
   return (
     <div
       className="rmx-image-handles"
@@ -69,6 +105,33 @@ export function ImageResizeHandles({ image, engine, editorRect }) {
           onPointerDown={(e) => handlePointerDown(e, corner)}
         />
       ))}
+      <div
+        className="rmx-image-alt-overlay"
+        style={{ pointerEvents: 'all' }}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        {editingAlt ? (
+          <input
+            ref={altInputRef}
+            className="rmx-image-alt-input"
+            type="text"
+            value={altText}
+            onChange={(e) => setAltText(e.target.value)}
+            onBlur={handleAltSave}
+            onKeyDown={handleAltKeyDown}
+            placeholder="Enter alt text..."
+          />
+        ) : (
+          <button
+            className="rmx-image-alt-label"
+            onClick={() => setEditingAlt(true)}
+            type="button"
+            title="Edit alt text"
+          >
+            {altText ? `Alt: ${altText}` : 'Add alt text'}
+          </button>
+        )}
+      </div>
     </div>
   )
 }
