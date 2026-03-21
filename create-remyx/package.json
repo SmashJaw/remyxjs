@@ -1,0 +1,18 @@
+{
+  "name": "create-remyx",
+  "version": "0.40.0",
+  "type": "module",
+  "description": "Remyx CLI (to be repurposed)",
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "remyx",
+    "cli"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "MIT"
+}
