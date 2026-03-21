@@ -2,7 +2,7 @@
 
 # Remyx Editor Roadmap
 
-**Current Version:** 0.39.0
+**Current Version:** 1.0.0-beta
 **Status:** Multi-package architecture complete (`@remyxjs/core` + `@remyxjs/react`), unified 6-theme system, autosave, command palette with recently-used pinning and custom command registration, code block syntax highlighting, enhanced tables, security hardening, inter-editor communication, RTL/i18n/print, block-based editing with type conversion/templates/grouping, mobile & touch optimization, comments & annotations with inline threads/mentions/panel/comment-only mode, expanded plugin architecture with dependency resolution/lifecycle hooks/scoped settings/registry, callouts/alerts/admonitions, template system with merge tags/conditionals/loops, keyboard-first editing with Vim/Emacs/auto-pair/multi-cursor, drag-and-drop content, advanced link management, math/equation editor, table of contents/document outline, content analytics/readability, real-time collaboration, UX/UI improvements (animations, empty state, distraction-free mode, breadcrumb bar, minimap, split view, sticky toolbar, toolbar customization, color presets, typography controls), spelling & grammar checking with writing-style presets, external config file support (defineConfig/loadConfig), performance optimizations (WorkerPool, VirtualScroller, compressed undo history, input batching, lazy plugin loading, shared selectionchange listener, getHTML caching, hash-based sanitizer LRU), P0 complete, 275/275 tasks resolved, 1768 tests passing
 
 A living document outlining planned features, improvements, and long-term direction for the Remyx rich-text editor. Sections are ordered by priority — security and stability first, then features ranked by user impact.

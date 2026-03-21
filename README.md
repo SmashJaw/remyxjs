@@ -49,9 +49,9 @@ A feature-rich WYSIWYG editor built on a framework-agnostic core with first-clas
 
 | Package | Version | Description |
 | --- | --- | --- |
-| [`@remyxjs/core`](./remyx-core/) | 0.39.0 | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
-| [`@remyxjs/react`](./remyx-react/) | 0.39.0 | React components, hooks, TypeScript declarations (peer-depends on `@remyxjs/core`) |
-| [`create-remyx`](./create-remyx/) | 0.39.0 | Reserved for future interactive CLI wizard ([see roadmap](./docs/ROADMAP.md)) |
+| [`@remyxjs/core`](./remyx-core/) | 1.0.0-beta | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
+| [`@remyxjs/react`](./remyx-react/) | 1.0.0-beta | React components, hooks, TypeScript declarations (peer-depends on `@remyxjs/core`) |
+| [`create-remyx`](./create-remyx/) | 1.0.0-beta | Reserved for future interactive CLI wizard ([see roadmap](./docs/ROADMAP.md)) |
 
 ## Getting Started
 
