@@ -3,6 +3,7 @@ logs
 *.log
 npm-debug.log*
 .npmrc
+*.npm*
 
 node_modules
 dist
