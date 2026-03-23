@@ -43,16 +43,21 @@
       },
       "versionActionsOptions": {
         "skipLockFileUpdate": true
+      },
+      "git": {
+        "commit": true,
+        "commitMessage": "chore(release): {version}",
+        "tag": true
       }
     },
     "changelog": {
       "projectChangelogs": true,
-      "workspaceChangelog": false
-    },
-    "git": {
-      "commit": true,
-      "commitMessage": "chore(release): {version}",
-      "tag": true
+      "workspaceChangelog": false,
+      "git": {
+        "commit": true,
+        "commitMessage": "chore(release): {version}",
+        "tag": true
+      }
     }
   }
 }
