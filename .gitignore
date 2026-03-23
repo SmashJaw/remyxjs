@@ -23,6 +23,9 @@ dist-ssr
 coverage/
 test-results/
 
+# npm
+.npmrc
+
 # Nx
 .nx/cache
 .nx/workspace-data
