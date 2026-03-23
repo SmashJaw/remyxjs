@@ -46,7 +46,7 @@
   },
   "sideEffects": false,
   "peerDependencies": {
-    "@remyxjs/core": ">=1.0.4-beta",
+    "@remyxjs/core": "*",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
