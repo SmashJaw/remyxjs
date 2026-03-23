@@ -1,10 +1,14 @@
-![Remyx Editor](../docs/screenshots/Remyx-Logo.svg)
+![Remyx Editor](https://raw.githubusercontent.com/SmashJaw/remyxjs/refs/heads/1.0.4-beta/docs/screenshots/Remyx-Logo.svg)
 
 # @remyxjs/core
 
 Framework-agnostic core engine for the Remyx Editor. Provides the editor engine, commands, plugin system, utilities, and CSS themes — with zero framework dependencies.
 
 Use this package to build Remyx Editor integrations for any framework (Vue, Svelte, Angular, vanilla JS) or for server-side processing. For React projects, use [`@remyxjs/react`](https://www.npmjs.com/package/@remyxjs/react), which includes this package plus React components and hooks.
+
+Visit us at
+RemyxJS.com (coming soon)
+[SmashJaw.com](https://smashjaw.com)
 
 ## Table of Contents
 

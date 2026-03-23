@@ -1,8 +1,12 @@
-![Remyx Editor](../docs/screenshots/Remyx-Logo.svg)
+![Remyx Editor](https://raw.githubusercontent.com/SmashJaw/remyxjs/refs/heads/1.0.4-beta/docs/screenshots/Remyx-Logo.svg)
 
 # @remyxjs/react
 
 A feature-rich WYSIWYG editor for React, built on the framework-agnostic [`@remyxjs/core`](https://www.npmjs.com/package/@remyxjs/core) engine. Configurable toolbar, menu bar, markdown support, theming, file uploads, and a plugin system.
+
+Visit us at
+RemyxJS.com (coming soon)
+[SmashJaw.com](https://smashjaw.com)
 
 ## Packages
 
