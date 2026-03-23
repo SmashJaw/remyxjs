@@ -38,6 +38,7 @@
     "projectsRelationship": "independent",
     "version": {
       "conventionalCommits": true,
+      "preserveMatchingDependencyRanges": false,
       "generatorOptions": {
         "fallbackCurrentVersionResolver": "disk"
       },

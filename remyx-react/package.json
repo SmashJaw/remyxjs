@@ -15,13 +15,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SmashJaw/remyxjs.git",
+    "url": "https://github.com/SmashJaw/remyx-editor.git",
     "directory": "packages/remyx-react"
   },
   "bugs": {
-    "url": "https://github.com/SmashJaw/remyxjs/issues"
+    "url": "https://github.com/SmashJaw/remyx-editor/issues"
   },
-  "homepage": "https://github.com/SmashJaw/remyxjs",
+  "homepage": "https://github.com/SmashJaw/remyx-editor/tree/main/packages/remyx-react#readme",
   "type": "module",
   "main": "./dist/remyx-react.cjs",
   "module": "./dist/remyx-react.js",
@@ -54,7 +54,7 @@
     "prop-types": "^15.8.1"
   },
   "devDependencies": {
-    "@remyxjs/core": "1.0.4",
+    "@remyxjs/core": "1.0.4-beta",
     "@vitejs/plugin-react": "5.1.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
