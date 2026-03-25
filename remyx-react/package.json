@@ -1,6 +1,6 @@
 {
   "name": "@remyxjs/react",
-  "version": "1.2.0-beta",
+  "version": "1.2.1-beta",
   "description": "React components and hooks for the Remyx rich-text editor",
   "keywords": [
     "wysiwyg",
@@ -9,19 +9,20 @@
     "react",
     "contenteditable",
     "react-editor",
-    "text-editor"
+    "text-editor",
+    "remyxjs"
   ],
   "author": "Remyx",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SmashJaw/remyx-editor.git",
+    "url": "https://github.com/SmashJaw/remyxjs.git",
     "directory": "packages/remyx-react"
   },
   "bugs": {
-    "url": "https://github.com/SmashJaw/remyx-editor/issues"
+    "url": "https://github.com/SmashJaw/remyxjs/issues"
   },
-  "homepage": "https://github.com/SmashJaw/remyx-editor/tree/main/packages/remyx-react#readme",
+  "homepage": "https://remyxjs.com",
   "type": "module",
   "main": "./dist/remyx-react.cjs",
   "module": "./dist/remyx-react.js",
@@ -46,7 +47,7 @@
   },
   "sideEffects": false,
   "peerDependencies": {
-    "@remyxjs/core": "1.2.0-beta",
+    "@remyxjs/core": "1.2.1-beta",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
@@ -54,7 +55,7 @@
     "prop-types": "^15.8.1"
   },
   "devDependencies": {
-    "@remyxjs/core": "1.2.0-beta",
+    "@remyxjs/core": "1.2.1-beta",
     "@vitejs/plugin-react": "5.1.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

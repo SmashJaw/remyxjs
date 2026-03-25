@@ -51,9 +51,9 @@ Remyx Editor is a monorepo with publishable packages under `packages/` and a use
 ```
 remyx-editor/
   packages/
-    remyx-core/        @remyxjs/core     1.2.0-beta  Framework-agnostic editor engine
-    remyx-react/       @remyxjs/react    1.2.0-beta  React components and hooks
-    create-remyx/      create-remyx      1.2.0-beta  Reserved for future CLI tool
+    remyx-core/        @remyxjs/core     1.2.1-beta  Framework-agnostic editor engine
+    remyx-react/       @remyxjs/react    1.2.1-beta  React components and hooks
+    create-remyx/      create-remyx      1.2.1-beta  Reserved for future CLI tool
     docs/              (not published)               Documentation, changelog, roadmap
   remyxjs/
     config/            Editor configuration JSON files (one per editor instance)
