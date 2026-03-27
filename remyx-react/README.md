@@ -64,6 +64,14 @@ Use `@remyxjs/core` directly if building a wrapper for another framework (Vue, S
 npm install @remyxjs/core @remyxjs/react
 ```
 
+Then scaffold the `remyxjs/` directory in your project root:
+
+```bash
+npx remyxjs init
+```
+
+This creates `remyxjs/config/`, `remyxjs/plugins/`, and `remyxjs/themes/` with built-in presets, plugins, and theme CSS files. The editor discovers these at runtime via Vite's `import.meta.glob()`. See the [setup guide](../docs/SETUP.md) for details and CLI options (`--force`, `--no-plugins`, `--no-themes`).
+
 Import both stylesheets in your app entry point:
 
 ```js

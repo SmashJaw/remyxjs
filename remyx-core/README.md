@@ -107,6 +107,14 @@ or the RemyxJS official site: [`RemyxJs.com`](https://remyxjs.com)
 npm install @remyxjs/core
 ```
 
+Then scaffold the `remyxjs/` directory in your project root:
+
+```bash
+npx remyxjs init
+```
+
+This creates `remyxjs/config/`, `remyxjs/plugins/`, and `remyxjs/themes/` with built-in presets, plugin source files, and theme CSS. The init CLI is bundled with `@remyxjs/core`. See the [setup guide](../docs/SETUP.md) for details and CLI options (`--force`, `--no-plugins`, `--no-themes`).
+
 ## Quick Start
 
 ```js
