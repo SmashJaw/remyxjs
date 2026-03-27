@@ -8,6 +8,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.3.0-beta] — 2026-03-27
+
+### Added
+
+- **BiDi-aware caret movement** — New `BiDiCaretManager` intercepts ArrowLeft/ArrowRight keydown events and ensures caret moves in the correct visual direction in RTL blocks and at BiDi boundaries. In RTL blocks, ArrowLeft moves forward (deeper into text) and ArrowRight moves backward, matching the visual layout. Supports Shift+Arrow for selection extension. Ctrl/Cmd/Alt combos pass through to browser defaults for word-jump and line-jump behavior.
+- **`Selection.moveVisual(direction, extend, granularity)`** — New method on the Selection class that translates visual left/right movement into logical forward/backward based on the parent block's `dir` attribute. Used by BiDiCaretManager, Vim mode, and Emacs mode.
+- **`Selection.getBlockDirection()`** — Returns `'ltr'` or `'rtl'` from the current block's `dir` attribute.
+- **`Selection.isAtBiDiBoundary()`** — Detects when the caret sits between characters of different directionality.
+- **`getCharDirection(char)`** — New utility in `rtl.js` that returns `'ltr'`, `'rtl'`, or `'neutral'` for a single character.
+- **`isBiDiBoundary(text, offset)`** — New utility in `rtl.js` that detects direction changes at a text offset, skipping neutral characters (digits, punctuation, spaces).
+- **Automatic `dir` attribute updates** — `EditorEngine._handleInput()` now calls `applyAutoDirectionAll()` on every input event to keep per-block `dir` attributes current as users type.
+- **Vim/Emacs BiDi support** — Vim h/l/w/b/0/$ and Emacs Ctrl+f/b/a/e now use `Selection.moveVisual()` instead of raw `Selection.modify()`, making them direction-aware in RTL blocks.
+- **`npx remyxjs init` documentation** — Added missing init step to SETUP.md, main README, @remyxjs/core README, and @remyxjs/react README explaining the `remyxjs/` directory scaffolding.
+
+### Removed
+
+- **`create-remyx` package** — Removed the `create-remyx` package and `packages/create-remyx/` directory. The package was reserved for a future interactive CLI wizard that is no longer planned.
+- **`create-remyx-app` CLI** — Removed the `npx create-remyx-app` scaffolding CLI from `@remyxjs/react` (the `create/` directory, bin entry, and templates). Use `npm install @remyxjs/core @remyxjs/react` followed by `npx remyxjs init` to set up a project.
+- **`create-remyx` Advanced Wizard roadmap section** — Removed from ROADMAP.md.
+
+### Changed
+
+- `EditorEngine` constructor now instantiates `BiDiCaretManager` alongside `KeyboardManager`
+- `Selection` class imports from `rtl.js` for direction detection
+- KeyboardPlugin Vim/Emacs movement commands now route through `engine.selection.moveVisual()`
+
+---
+
 ## [1.2.1-beta] — 2026-03-24
 
 ### Architecture

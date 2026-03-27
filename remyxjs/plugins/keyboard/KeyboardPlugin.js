@@ -304,14 +304,14 @@ export function KeyboardPlugin(options = {}) {
           engine.eventBus.emit('vim:modeChange', { mode: VIM_MODES.NORMAL })
         }
         break
-      case 'h': sel?.modify('move', 'backward', 'character'); break
-      case 'l': sel?.modify('move', 'forward', 'character'); break
+      case 'h': engine.selection.moveVisual('left', false, 'character'); break
+      case 'l': engine.selection.moveVisual('right', false, 'character'); break
       case 'j': sel?.modify('move', 'forward', 'line'); break
       case 'k': sel?.modify('move', 'backward', 'line'); break
-      case 'w': sel?.modify('move', 'forward', 'word'); break
-      case 'b': sel?.modify('move', 'backward', 'word'); break
-      case '0': sel?.modify('move', 'backward', 'lineboundary'); break
-      case '$': sel?.modify('move', 'forward', 'lineboundary'); break
+      case 'w': engine.selection.moveVisual('right', false, 'word'); break
+      case 'b': engine.selection.moveVisual('left', false, 'word'); break
+      case '0': engine.selection.moveVisual('left', false, 'lineboundary'); break
+      case '$': engine.selection.moveVisual('right', false, 'lineboundary'); break
       case 'G': // go to end
         if (sel && engine.element.lastChild) {
           const r = document.createRange()
@@ -375,10 +375,10 @@ export function KeyboardPlugin(options = {}) {
     const range = sel?.rangeCount > 0 ? sel.getRangeAt(0) : null
 
     switch (action) {
-      case 'moveToLineStart': sel?.modify('move', 'backward', 'lineboundary'); break
-      case 'moveToLineEnd': sel?.modify('move', 'forward', 'lineboundary'); break
-      case 'moveForward': sel?.modify('move', 'forward', 'character'); break
-      case 'moveBackward': sel?.modify('move', 'backward', 'character'); break
+      case 'moveToLineStart': engine.selection.moveVisual('left', false, 'lineboundary'); break
+      case 'moveToLineEnd': engine.selection.moveVisual('right', false, 'lineboundary'); break
+      case 'moveForward': engine.selection.moveVisual('right', false, 'character'); break
+      case 'moveBackward': engine.selection.moveVisual('left', false, 'character'); break
       case 'moveDown': sel?.modify('move', 'forward', 'line'); break
       case 'moveUp': sel?.modify('move', 'backward', 'line'); break
       case 'deleteForward': document.execCommand('forwardDelete'); break

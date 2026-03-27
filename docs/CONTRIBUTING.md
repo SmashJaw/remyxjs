@@ -51,9 +51,8 @@ Remyx Editor is a monorepo with publishable packages under `packages/` and a use
 ```
 remyx-editor/
   packages/
-    remyx-core/        @remyxjs/core     1.2.1-beta  Framework-agnostic editor engine
-    remyx-react/       @remyxjs/react    1.2.1-beta  React components and hooks
-    create-remyx/      create-remyx      1.2.1-beta  Reserved for future CLI tool
+    remyx-core/        @remyxjs/core     1.3.0-beta  Framework-agnostic editor engine
+    remyx-react/       @remyxjs/react    1.3.0-beta  React components and hooks
     docs/              (not published)               Documentation, changelog, roadmap
   remyxjs/
     config/            Editor configuration JSON files (one per editor instance)
@@ -514,7 +513,7 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 ### Scope
 
-Use the package short name: `core`, `react`, `create-remyx`, or `docs`. Omit the scope for cross-cutting changes.
+Use the package short name: `core`, `react`, or `docs`. Omit the scope for cross-cutting changes.
 
 ### Examples
 

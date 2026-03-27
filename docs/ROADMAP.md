@@ -2,8 +2,8 @@
 
 # Remyx Editor Roadmap
 
-**Current Version:** 1.2.1-beta
-**Status:** Multi-package architecture complete (`@remyxjs/core` + `@remyxjs/react`), config-file-only architecture (RemyxEditor accepts config prop), drag-and-drop plugin system (remyxjs/plugins/), theme externalization (remyxjs/themes/), 5 config presets, unified 6-theme system, autosave, command palette with recently-used pinning and custom command registration, code block syntax highlighting, enhanced tables, security hardening, inter-editor communication, RTL/i18n/print, block-based editing with type conversion/templates/grouping, mobile & touch optimization, comments & annotations with inline threads/mentions/panel/comment-only mode, expanded plugin architecture with dependency resolution/lifecycle hooks/scoped settings/registry, callouts/alerts/admonitions, template system with merge tags/conditionals/loops, keyboard-first editing with Vim/Emacs/auto-pair/multi-cursor, drag-and-drop content, advanced link management, math/equation editor, table of contents/document outline, content analytics/readability, real-time collaboration, UX/UI improvements (animations, empty state, distraction-free mode, breadcrumb bar, minimap, split view, sticky toolbar, toolbar customization, color presets, typography controls), spelling & grammar checking with writing-style presets, performance optimizations (WorkerPool, VirtualScroller, compressed undo history, input batching, lazy plugin loading, shared selectionchange listener, getHTML caching, hash-based sanitizer LRU), comprehensive code audit with 50 bug fixes, P0 complete, 275/275 tasks resolved, 1768 tests passing
+**Current Version:** 1.3.0-beta
+**Status:** Multi-package architecture complete (`@remyxjs/core` + `@remyxjs/react`), config-file-only architecture (RemyxEditor accepts config prop), drag-and-drop plugin system (remyxjs/plugins/), theme externalization (remyxjs/themes/), 5 config presets, unified 6-theme system, autosave, command palette with recently-used pinning and custom command registration, code block syntax highlighting, enhanced tables, security hardening, inter-editor communication, RTL/i18n/print with BiDi-aware caret movement, block-based editing with type conversion/templates/grouping, mobile & touch optimization, comments & annotations with inline threads/mentions/panel/comment-only mode, expanded plugin architecture with dependency resolution/lifecycle hooks/scoped settings/registry, callouts/alerts/admonitions, template system with merge tags/conditionals/loops, keyboard-first editing with Vim/Emacs/auto-pair/multi-cursor, drag-and-drop content, advanced link management, math/equation editor, table of contents/document outline, content analytics/readability, real-time collaboration, UX/UI improvements (animations, empty state, distraction-free mode, breadcrumb bar, minimap, split view, sticky toolbar, toolbar customization, color presets, typography controls), spelling & grammar checking with writing-style presets, performance optimizations (WorkerPool, VirtualScroller, compressed undo history, input batching, lazy plugin loading, shared selectionchange listener, getHTML caching, hash-based sanitizer LRU), comprehensive code audit with 50 bug fixes, P0 complete, 275/275 tasks resolved, 1768 tests passing
 
 A living document outlining planned features, improvements, and long-term direction for the Remyx rich-text editor. Sections are ordered by priority — security and stability first, then features ranked by user impact.
 
@@ -27,14 +27,14 @@ A `demos/` directory with self-contained examples and end-to-end Playwright test
 
 A community-driven repository hosted on [remyxjs.com](https://remyxjs.com) for discovering, sharing, and installing user-made plugins and themes.
 
-- **Plugin registry**: browse, search, and install community plugins directly from the editor config or CLI (`npx create-remyx-app` plugin picker)
+- **Plugin registry**: browse, search, and install community plugins directly from the editor config or CLI
 - **Theme gallery**: browse and preview user-submitted themes with live demos; one-click install via config file or `customTheme` prop
 - **Publishing workflow**: `npx remyx publish` CLI command to package and submit a plugin or theme to the registry with metadata (name, version, description, author, tags, screenshots)
 - **Versioning & compatibility**: semver-based versioning with `@remyxjs/core` compatibility ranges; registry enforces minimum core version
 - **Quality checks**: automated validation on submission — lint, bundle size check, security scan (no eval, no external network calls), basic smoke test
 - **Rating & reviews**: community ratings and usage statistics to surface popular/trusted plugins
 - **Scoped packages**: plugins published as `@remyxjs-community/plugin-name` on npm for easy installation; themes as JSON files downloadable from the gallery
-- **SDK**: `createPlugin()` and `createTheme()` APIs already exist; add a `remyx-plugin-template` scaffold via `npx create-remyx --plugin` for quick authoring
+- **SDK**: `createPlugin()` and `createTheme()` APIs already exist; add a plugin template scaffold for quick authoring
 - **Integration with `resolvePlugins`**: registered community plugins can be referenced by name in JSON/YAML config files (e.g., `"plugins": ["@community/kanban-board"]`)
 
 ## Version History & Diffing
@@ -56,20 +56,6 @@ A community-driven repository hosted on [remyxjs.com](https://remyxjs.com) for d
 - Embedded video player with playback controls (not just raw `<video>`)
 - Image editing toolbar: crop, rotate, brightness, contrast, filters
 - Drag-to-resize with aspect ratio lock
-
-## create-remyx Advanced Wizard
-
-Full-featured interactive wizard via `npx create-remyx`:
-
-- Pick a framework: React, Vue, Svelte, Angular, or Vanilla JS
-- Choose features: toolbar layout, menu bar, status bar, floating toolbar, context menu
-- Select plugins: word count, autolink, placeholder, code highlighting, math, comments
-- Configure theme with live preview of theme variables
-- Pick document formats: HTML output, Markdown output, or both
-- Optional add-ons: image upload handler scaffold, collaboration stub
-- Output a `remyx.config.js` (or `.ts`) with the full `defineConfig()` setup
-- Template variants: minimal (bare editor), standard (toolbar + status bar), full-featured (all UI chrome)
-- Plugin authoring mode: `npx create-remyx --plugin` scaffolds a plugin package with `createPlugin()` boilerplate, test setup, and build config
 
 ## Framework Wrappers & CMS Integrations
 
@@ -451,17 +437,6 @@ These features are not planned for the open-source @remyxjs packages and will be
 - ~~Theme export/import: save custom themes as JSON and share across projects~~ — supported via `customTheme` prop and `defineConfig()`
 - ~~Theme presets: community-contributed themes installable via npm or config~~ — 6 built-in presets shipped; community themes can be shared as JSON config files
 - Contrast checker: validate text/background color combinations against WCAG AA/AAA — will be integrated into the remyxjs.com theme builder
-
-## `create-remyx-app` — ✅ Shipped (v0.25.0, enhanced v0.27.0)
-
-Quick project scaffolding via `npx create-remyx-app`:
-
-- ~~Project name prompt~~
-- ~~Language: JavaScript (JSX) or TypeScript (TSX)~~
-- ~~Theme selection: Light, Dark, Ocean, Forest, Sunset, Rose~~ (v0.27.0)
-- ~~Optional PDF/DOCX import (mammoth + pdfjs-dist)~~
-- ~~Vite-based project with `@remyxjs/core` + `@remyxjs/react`~~
-- ~~Post-scaffold instructions: install, dev, build~~
 
 ## Security Hardening — ✅ Shipped (v0.24.0–v0.28.0)
 

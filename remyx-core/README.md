@@ -1905,6 +1905,14 @@ sel.restore(bookmark);
 // Collapse cursor
 sel.collapse(); // collapse to start
 sel.collapse(true); // collapse to end
+
+// BiDi-aware caret movement
+sel.getBlockDirection(); // 'ltr' or 'rtl' from parent block's dir attribute
+sel.isAtBiDiBoundary(); // true if caret sits between LTR and RTL characters
+sel.moveVisual('left'); // move caret one character visually left (direction-aware)
+sel.moveVisual('right', true); // Shift+Right: extend selection visually right
+sel.moveVisual('left', false, 'word'); // move one word visually left
+sel.moveVisual('right', false, 'lineboundary'); // move to visual line end
 ```
 
 ## History (Undo/Redo)

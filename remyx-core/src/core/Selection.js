@@ -1,4 +1,5 @@
 import { walkUpToBlock } from '../utils/dom.js'
+import { detectTextDirection, getCharDirection, isBiDiBoundary } from '../utils/rtl.js'
 
 // Pre-compiled regex patterns (avoid recompilation on every selection change)
 const HEADING_REGEX = /^h[1-6]$/
@@ -490,5 +491,64 @@ export class Selection {
     const range = this.getRange()
     if (!range) return null
     return range.getBoundingClientRect()
+  }
+
+  /**
+   * Returns the text direction of the block element containing the caret.
+   * Falls back to 'ltr' if no block is found or no `dir` attribute is set.
+   * @returns {'ltr' | 'rtl'} The block direction
+   */
+  getBlockDirection() {
+    const block = this.getParentBlock()
+    if (!block) return 'ltr'
+    const dir = block.getAttribute('dir')
+    return dir === 'rtl' ? 'rtl' : 'ltr'
+  }
+
+  /**
+   * Checks whether the caret is currently at a BiDi boundary — where the
+   * characters on either side have different strong directionality.
+   * @returns {boolean} True if the caret is at a BiDi boundary
+   */
+  isAtBiDiBoundary() {
+    const range = this.getRange()
+    if (!range || !range.collapsed) return false
+    const node = range.startContainer
+    if (node.nodeType !== Node.TEXT_NODE) return false
+    return isBiDiBoundary(node.textContent, range.startOffset)
+  }
+
+  /**
+   * Moves the caret one character in the given visual direction, respecting
+   * the block's text direction. In RTL blocks, 'left' maps to
+   * Selection.modify('move', 'forward', 'character') because the forward
+   * direction is visually leftward.
+   *
+   * @param {'left' | 'right'} visualDirection - The visual direction to move
+   * @param {boolean} [extend=false] - If true, extend the selection instead of moving the caret
+   * @param {'character' | 'word' | 'lineboundary'} [granularity='character'] - Movement granularity
+   * @returns {void}
+   */
+  moveVisual(visualDirection, extend = false, granularity = 'character') {
+    const sel = this.getSelection()
+    if (!sel) return
+
+    const blockDir = this.getBlockDirection()
+    const alter = extend ? 'extend' : 'move'
+
+    // In LTR blocks: left = backward, right = forward (default)
+    // In RTL blocks: left = forward, right = backward (reversed)
+    let logicalDirection
+    if (blockDir === 'rtl') {
+      logicalDirection = visualDirection === 'left' ? 'forward' : 'backward'
+    } else {
+      logicalDirection = visualDirection === 'left' ? 'backward' : 'forward'
+    }
+
+    try {
+      sel.modify(alter, logicalDirection, granularity)
+    } catch {
+      // Selection.modify() may not be available in all environments
+    }
   }
 }

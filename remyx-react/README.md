@@ -11,8 +11,8 @@ or the RemyxJS official site: [`Remyxjs.com`](https://remyxjs.com)
 
 | Package                                                        | Version    | Description                                                             |
 | -------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------- |
-| [`@remyxjs/core`](https://www.npmjs.com/package/@remyxjs/core) | 1.2.1-beta | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
-| [`@remyxjs/react`](./)                                         | 1.2.1-beta | React components, hooks, and TypeScript declarations                    |
+| [`@remyxjs/core`](https://www.npmjs.com/package/@remyxjs/core) | 1.3.0-beta | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
+| [`@remyxjs/react`](./)                                         | 1.3.0-beta | React components, hooks, and TypeScript declarations                    |
 
 Use `@remyxjs/core` directly if building a wrapper for another framework (Vue, Svelte, Angular, vanilla JS).
 

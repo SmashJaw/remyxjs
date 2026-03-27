@@ -3,10 +3,12 @@ import { Selection } from './Selection.js'
 import { CommandRegistry } from './CommandRegistry.js'
 import { History } from './History.js'
 import { KeyboardManager } from './KeyboardManager.js'
+import { BiDiCaretManager } from './BiDiCaretManager.js'
 import { Sanitizer } from './Sanitizer.js'
 import { Clipboard } from './Clipboard.js'
 import { DragDrop } from './DragDrop.js'
 import { PluginManager } from '../plugins/PluginManager.js'
+import { applyAutoDirectionAll } from '../utils/rtl.js'
 
 /**
  * @typedef {Object} EditorOptions
@@ -89,6 +91,7 @@ export class EditorEngine {
     this.eventBus = new EventBus()
     this.selection = new Selection(element)
     this.keyboard = new KeyboardManager(this)
+    this.bidiCaret = new BiDiCaretManager(this)
     this.commands = new CommandRegistry(this)
     this.history = new History(this, options.history)
     this.sanitizer = new Sanitizer(options.sanitize)
@@ -131,6 +134,7 @@ export class EditorEngine {
       _selectionHandlers.set(this.element, this)
       _ensureSelectionListener()
 
+      this.bidiCaret.init()
       this.keyboard.init()
       this.history.init()
       this.clipboard.init()
@@ -161,6 +165,7 @@ export class EditorEngine {
     _selectionHandlers.delete(this.element)
 
     this.eventBus.emit('destroy')
+    this.bidiCaret.destroy()
     this.keyboard.destroy()
     this.history.destroy()
     this.clipboard.destroy()
@@ -293,6 +298,9 @@ export class EditorEngine {
     this._htmlDirty = true
     // Task 273: Invalidate text cache on input
     this._textCacheDirty = true
+
+    // Keep per-block dir attributes current for BiDi caret movement
+    applyAutoDirectionAll(this.element)
 
     // Ensure we always have at least one block element
     if (this.element.innerHTML === '' || this.element.innerHTML === '<br>') {

@@ -68,6 +68,57 @@ export function applyAutoDirectionAll(container) {
 }
 
 /**
+ * Detect the direction of a single character.
+ *
+ * @param {string} char - A single character to test
+ * @returns {'ltr' | 'rtl' | 'neutral'} The character's directionality
+ */
+export function getCharDirection(char) {
+  if (!char || typeof char !== 'string') return 'neutral'
+  // Take only the first character (supports surrogate pairs via slice)
+  const c = char.length > 1 ? char.slice(0, 1) : char
+  if (RTL_REGEX.test(c)) return 'rtl'
+  if (LTR_REGEX.test(c)) return 'ltr'
+  return 'neutral'
+}
+
+/**
+ * Detect whether a position in a string is at a BiDi boundary —
+ * i.e. the characters immediately before and after the offset have
+ * different strong directionality (ignoring neutral characters).
+ *
+ * @param {string} text - The text to analyze
+ * @param {number} offset - The character offset (boundary is between offset-1 and offset)
+ * @returns {boolean} True if this is a BiDi boundary
+ */
+export function isBiDiBoundary(text, offset) {
+  if (!text || offset <= 0 || offset >= text.length) return false
+
+  // Walk backward from offset-1 to find the nearest strong-direction character
+  let leftDir = null
+  for (let i = offset - 1; i >= 0; i--) {
+    const dir = getCharDirection(text[i])
+    if (dir !== 'neutral') {
+      leftDir = dir
+      break
+    }
+  }
+
+  // Walk forward from offset to find the nearest strong-direction character
+  let rightDir = null
+  for (let i = offset; i < text.length; i++) {
+    const dir = getCharDirection(text[i])
+    if (dir !== 'neutral') {
+      rightDir = dir
+      break
+    }
+  }
+
+  if (!leftDir || !rightDir) return false
+  return leftDir !== rightDir
+}
+
+/**
  * RTL-aware CSS logical property mappings.
  * Use these constants to reference CSS logical properties in JavaScript
  * for consistent layout in both LTR and RTL contexts.

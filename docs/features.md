@@ -19,6 +19,8 @@
 ### Alignment
 - Left, Center, Right, Justify alignment
 - RTL (right-to-left) text support with auto-detection
+- BiDi-aware caret movement (visual arrow key navigation in RTL blocks and at BiDi boundaries)
+- Vim/Emacs keybinding BiDi support (h/l/w/b/Ctrl+f/Ctrl+b respect block direction)
 
 ### Lists
 - Ordered (numbered) lists

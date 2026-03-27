@@ -23,7 +23,7 @@ A feature-rich WYSIWYG editor built on a framework-agnostic core with first-clas
 - **Accessibility** — Skip navigation, focus trapping in modals, ARIA roles, keyboard-navigable toolbar
 - **Code block syntax highlighting** — 11 languages (JS/TS, Python, CSS, SQL, JSON, Bash, Rust, Go, Java, HTML) with auto-detection, theme-aware token colors, language selector dropdown, line numbers toggle, copy-to-clipboard button, inline code highlighting, and extensible language registry
 - **Enhanced tables** — Sortable columns, multi-column sort, filterable rows, inline formulas (SUM, AVERAGE, COUNT, MIN, MAX, IF, CONCAT), cell formatting (number, currency, percentage, date), column/row resize handles, sticky header rows, and copy/paste interop with Excel and Google Sheets
-- **RTL support** — Automatic text direction detection (`detectTextDirection`), per-block `dir` attribute, CSS logical properties for lists and blockquotes
+- **RTL support** — Automatic text direction detection (`detectTextDirection`), per-block `dir` attribute, CSS logical properties for lists and blockquotes, BiDi-aware caret movement (visual arrow key navigation in RTL blocks and at BiDi boundaries), Vim/Emacs BiDi-aware movement
 - **Internationalization (i18n)** — 120+ externalized strings, `t()` with interpolation, `registerLocale()` for custom translations, partial locale packs with English fallback
 - **Print stylesheet** — Clean printed output with hidden chrome, page-break control, link URLs, orphan/widow handling
 - **Template system** — `{{merge_tag}}` syntax with visual chips, `{{#if}}`/`{{#each}}` blocks, live preview with sample data, 5 pre-built templates (email, invoice, letter, report, newsletter), custom template registration, JSON export
@@ -49,33 +49,44 @@ A feature-rich WYSIWYG editor built on a framework-agnostic core with first-clas
 
 | Package | Version | Description |
 | --- | --- | --- |
-| [`@remyxjs/core`](./remyx-core/) | 1.2.1-beta | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
-| [`@remyxjs/react`](./remyx-react/) | 1.2.1-beta | React components, hooks, TypeScript declarations (peer-depends on `@remyxjs/core`) |
-| [`create-remyx`](./create-remyx/) | 1.2.1-beta | Reserved for future interactive CLI wizard ([see roadmap](./docs/ROADMAP.md)) |
+| [`@remyxjs/core`](./remyx-core/) | 1.3.0-beta | Framework-agnostic engine, commands, plugins, utilities, and CSS themes |
+| [`@remyxjs/react`](./remyx-react/) | 1.3.0-beta | React components, hooks, TypeScript declarations (peer-depends on `@remyxjs/core`) |
 
 ## Getting Started
-
-### New Project (Recommended)
-
-The fastest way to start is with `create-remyx-app` (shipped with `@remyxjs/react`), which scaffolds a complete project:
-
-```bash
-npx create-remyx-app my-editor
-```
-
-You'll be prompted to pick:
-- **Language**: JavaScript (JSX) or TypeScript (TSX)
-- **Theme**: Light, Dark, Ocean, Forest, Sunset, or Rose
-- **PDF/DOCX import**: include or skip heavy document dependencies (~5 MB)
 
 ### Which package should I use?
 
 | Use case | Install |
 | --- | --- |
-| New project (interactive setup) | `npx create-remyx-app` |
 | React project | `npm install @remyxjs/core @remyxjs/react` |
 | Vue / Svelte / Angular / Vanilla JS | `npm install @remyxjs/core` (build your own wrapper) |
 | Server-side HTML processing | `npm install @remyxjs/core` |
+
+### Scaffold the `remyxjs/` directory
+
+After installing, run the init command to create the `remyxjs/` folder in your project root with config presets, built-in plugins, and theme CSS files:
+
+```bash
+npx remyxjs init
+```
+
+This creates:
+
+```
+your-project/
+  remyxjs/
+    config/        → Editor configuration JSON files (default.json, etc.)
+    plugins/       → Built-in plugin folders + auto-loader (index.js)
+    themes/        → Theme CSS files + auto-loader (index.js)
+```
+
+The editor discovers config, plugins, and themes from this directory at runtime via Vite's `import.meta.glob()`. Without this step, the editor will still render but won't have user-customizable config, plugins, or themes.
+
+| Flag | Description |
+|------|-------------|
+| `--force` | Overwrite existing files |
+| `--no-plugins` | Skip copying built-in plugins |
+| `--no-themes` | Skip copying built-in themes |
 
 ## Quick Start (React)
 
@@ -243,15 +254,12 @@ See the full [@remyxjs/core README](./remyx-core/README.md) for the complete eng
 | Collaboration | CollaborationPlugin, transport API | useCollaboration hook, CollaborationBar |
 | React hooks | — | useRemyxEditor, useEditorEngine, useDragDrop, useAutosave, useComments, useSpellcheck, useCollaboration, useToast |
 | TypeScript types | — | Full `.d.ts` declarations |
-| Scaffolding CLI | — | `npx create-remyx-app` |
-
 ## Monorepo Structure
 
 ```
 packages/
-  create-remyx/   → create-remyx          Reserved for future CLI wizard
   remyx-core/     → @remyxjs/core         190+ exports, 0 framework deps
-  remyx-react/    → @remyxjs/react        React components + hooks + TS types + scaffolding CLI
+  remyx-react/    → @remyxjs/react        React components + hooks + TS types
   docs/           Documentation, changelogs, roadmap, benchmarks
 remyxjs/
   config/         Editor config presets (default.json, minimal.json, blog-editor.json, etc.)
@@ -314,7 +322,7 @@ See [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for setup instructions, architectu
 | [@remyxjs/core README](./remyx-core/README.md) | Full API — engine, commands, plugins, selection, history, sanitizer, theming, toolbar config, utilities |
 | [CONTRIBUTING.md](./docs/CONTRIBUTING.md) | Setup, architecture, adding commands/plugins, PR process |
 | [CHANGELOG.md](./docs/CHANGELOG.md) | Version history and release notes |
-| [ROADMAP.md](./docs/ROADMAP.md) | Planned features, framework wrappers, CMS integrations, create-remyx CLI wizard |
+| [ROADMAP.md](./docs/ROADMAP.md) | Planned features, framework wrappers, CMS integrations |
 | [BENCHMARK.md](./docs/BENCHMARK.md) | Build, bundle, test, and lint performance metrics |
 
 ## License

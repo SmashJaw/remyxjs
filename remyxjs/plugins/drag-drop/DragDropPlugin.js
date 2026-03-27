@@ -97,7 +97,6 @@ export function DragDropPlugin(options = {}) {
   let dropIndicator = null
   let draggedBlock = null
   let ghostEl = null
-  let ghostCleanupTimer = null
 
   function handleDragStart(e) {
     if (!engine || !enableReorder) return
@@ -111,12 +110,6 @@ export function DragDropPlugin(options = {}) {
     ghostEl = block.cloneNode(true)
     ghostEl.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0.6;pointer-events:none;max-width:400px;'
     document.body.appendChild(ghostEl)
-    ghostCleanupTimer = setTimeout(() => {
-      if (ghostEl && ghostEl.parentNode) {
-        ghostEl.parentNode.removeChild(ghostEl)
-        ghostEl = null
-      }
-    }, 5000)
     e.dataTransfer.setDragImage(ghostEl, 20, 20)
 
     e.dataTransfer.effectAllowed = 'move'
@@ -271,7 +264,6 @@ export function DragDropPlugin(options = {}) {
   }
 
   function handleDragEnd() {
-    clearTimeout(ghostCleanupTimer)
     cleanupDrag()
   }
 

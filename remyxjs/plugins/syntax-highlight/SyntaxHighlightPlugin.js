@@ -347,11 +347,7 @@ export function SyntaxHighlightPlugin() {
           textarea.style.opacity = '0'
           document.body.appendChild(textarea)
           textarea.select()
-          if (navigator.clipboard?.writeText) {
-            navigator.clipboard.writeText(code.textContent).catch(() => {})
-          } else {
-            document.execCommand('copy')
-          }
+          document.execCommand('copy')
           document.body.removeChild(textarea)
           btn.textContent = '✓'
           btn.classList.add('rmx-code-copy-success')

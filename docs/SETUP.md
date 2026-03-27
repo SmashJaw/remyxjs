@@ -8,6 +8,42 @@
 npm install @remyxjs/core @remyxjs/react
 ```
 
+### Project Scaffolding
+
+After installing, run the init command to scaffold the `remyxjs/` directory in your project root:
+
+```bash
+npx remyxjs init
+```
+
+This creates the following structure:
+
+```
+remyxjs/
+  config/           # Editor configuration files
+    default.json    # Default config preset
+  plugins/          # Plugin folders (14 built-in plugins copied here)
+    index.js        # Auto-loader (discovers plugins via import.meta.glob)
+    analytics/
+    table/
+    ...
+  themes/           # Theme CSS files (6 built-in themes copied here)
+    index.js        # Auto-loader (discovers themes via import.meta.glob)
+    light.css
+    dark.css
+    ...
+```
+
+The editor reads config, plugins, and themes from this directory at runtime using Vite's `import.meta.glob()`. Without running `npx remyxjs init`, the `remyxjs/` folder won't exist and the editor will fall back to defaults with no user-customizable config, plugins, or themes.
+
+**Options:**
+
+| Flag | Description |
+|------|-------------|
+| `--force` | Overwrite existing files |
+| `--no-plugins` | Skip copying built-in plugins |
+| `--no-themes` | Skip copying built-in themes |
+
 ### Basic Usage
 
 ```jsx
@@ -24,19 +60,23 @@ The `config` prop references a JSON file in your `remyxjs/config/` directory.
 
 ## Project Structure
 
+After running `npx remyxjs init`, your project will look like this:
+
 ```
 your-project/
-  remyxjs/
-    config/           # Editor configuration files
+  remyxjs/              # Created by `npx remyxjs init`
+    config/             # Editor configuration files
       default.json
       blog-editor.json
       minimal.json
-    plugins/          # Optional plugins (drag-and-drop install)
+    plugins/            # Optional plugins (drag-and-drop install)
+      index.js          # Auto-loader
       analytics/
       table/
       comments/
       ...
-    themes/           # Theme CSS files
+    themes/             # Theme CSS files
+      index.js          # Auto-loader
       light.css
       dark.css
       ocean.css
